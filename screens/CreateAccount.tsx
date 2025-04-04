@@ -69,13 +69,13 @@ export default function CreateAccount({ navigation }: Props) {
           placeholder="Senha"
           placeholderTextColor="#9E9E9E"
           onChangeText={setSenha}
-          secureTextEntry
+          //secureTextEntry
         />
         <TextInput
           style={styles.Input}
           placeholder="Confirme sua senha"
           placeholderTextColor="#9E9E9E"
-          secureTextEntry
+          //secureTextEntry
         />
       </View>
       <Pressable style={styles.CreateAccountButton} onPress={criarConta}>

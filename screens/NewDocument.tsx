@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View, Text, TouchableOpacity, Pressable } from 'react-native';
+import {
+  Image, StyleSheet, View, Text, TouchableOpacity, Pressable,
+} from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
+import { decode } from 'base64-arraybuffer';
 import mime from 'mime';
 import { collection, addDoc } from 'firebase/firestore';
 import Background from './Background';
@@ -38,15 +41,17 @@ export default function NewDocumentScreen({ navigation }: Props) {
 
   const uploadParaSupabase = async (file: DocumentPicker.DocumentPickerAsset, nomeCustomizado: string): Promise<string | null> => {
     try {
-      const fileType = mime.getType(file.name) || 'application/pdf';
-      const fileContent = await FileSystem.readAsStringAsync(file.uri, {
+      const base64 = await FileSystem.readAsStringAsync(file.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
+      const arrayBuffer = decode(base64);
+      const contentType = file.mimeType || mime.getType(file.name) || 'application/pdf';
+
       const { data, error } = await supabase.storage
         .from('documents')
-        .upload(nomeCustomizado, fileContent, {
-          contentType: fileType,
+        .upload(nomeCustomizado, arrayBuffer, {
+          contentType,
           upsert: true,
         });
 
@@ -77,7 +82,8 @@ export default function NewDocumentScreen({ navigation }: Props) {
 
       for (const docItem of documentos) {
         if (docItem.file) {
-          const nomeArquivoUnico = `${Date.now()}-${docItem.file.name}`;
+          const ext = docItem.file.name?.split('.').pop() || 'pdf';
+          const nomeArquivoUnico = `envios/${Date.now()}-${docItem.file.name ?? 'documento'}.${ext}`;
           const url = await uploadParaSupabase(docItem.file, nomeArquivoUnico);
 
           if (!url) {
@@ -86,16 +92,16 @@ export default function NewDocumentScreen({ navigation }: Props) {
           }
 
           const doc: Documento = {
-            name: docItem.file.name,
+            name: docItem.file.name ?? 'documento.pdf',
             desc: docItem.tipo,
-            type: docItem.file.mimeType || 'Desconhecido',
+            type: docItem.file.mimeType || 'application/pdf',
             status: 'Enviado',
             date: new Date().toLocaleDateString(),
             size: docItem.file.size || 0,
           };
 
           await salvarDocumento(doc);
-          console.log(`Documento ${docItem.tipo} enviado com sucesso para:`, url);
+          console.log(`✅ Documento ${docItem.tipo} enviado com sucesso para: ${url}`);
         }
       }
 
