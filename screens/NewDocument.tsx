@@ -6,14 +6,16 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
 import mime from 'mime';
-import { collection, addDoc } from 'firebase/firestore';
 import Background from './Background';
-import { dbDocuments } from '../firebase/firebaseConfig';
 import { supabase } from '../supabase/supabaseClient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import * as Progress from 'react-native-progress';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'NewDocument'>;
+type NewDocumentRouteProp = RouteProp<RootStackParamList, 'NewDocument'>;
 
 interface Documento {
   name: string;
@@ -29,17 +31,15 @@ export default function NewDocumentScreen({ navigation }: Props) {
   const [fileEndereco, setFileEndereco] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [fileRenda, setFileRenda] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [fileProvas, setFileProvas] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
-
-  const salvarDocumento = async (doc: Documento) => {
-    try {
-      await addDoc(collection(dbDocuments, 'documentos'), doc);
-      console.log('Documento enviado com sucesso!');
-    } catch (error) {
-      console.error('Erro ao salvar documento:', error);
-    }
-  };
+  const [loading, setLoading] = useState<Boolean>()
+  
+  const route = useRoute<NewDocumentRouteProp>();
+  const { user, caso } = route.params;
+  const { email, id } = user;
 
   const uploadParaSupabase = async (file: DocumentPicker.DocumentPickerAsset, nomeCustomizado: string): Promise<string | null> => {
+    setLoading(true)
+    console.log(loading)
     try {
       const base64 = await FileSystem.readAsStringAsync(file.uri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -54,6 +54,10 @@ export default function NewDocumentScreen({ navigation }: Props) {
           contentType,
           upsert: true,
         });
+
+      deletarArquivo(`envios/${id}/${caso}/.keep.txt`)
+
+      setLoading(false)
 
       if (error) {
         console.error('Erro ao fazer upload no Supabase:', error);
@@ -71,6 +75,27 @@ export default function NewDocumentScreen({ navigation }: Props) {
     }
   };
 
+  const deletarArquivo = async (path: string) => {
+    const { data, error } = await supabase.storage
+      .from('documents')
+      .remove([path]);
+  
+    if (error) {
+      console.error('Erro ao deletar:', error.message);
+      return false;
+    }
+  
+    return true;
+  };
+
+  const sanitizeFileName = (nome: string) => {
+    return nome
+      .normalize('NFD') // separa acentos de letras
+      .replace(/[\u0300-\u036f]/g, '') // remove os acentos
+      .replace(/ç/g, 'c') // troca cedilha
+      .replace(/[^a-zA-Z0-9_]/g, '_'); // substitui tudo que não for letra/número por "_"
+  };
+
   const salvarTodosDocumentos = async () => {
     try {
       const documentos = [
@@ -79,18 +104,22 @@ export default function NewDocumentScreen({ navigation }: Props) {
         { file: fileRenda, tipo: 'Comprovante de Renda' },
         { file: fileProvas, tipo: 'Provas Relacionadas ao Caso' },
       ];
-
+  
       for (const docItem of documentos) {
         if (docItem.file) {
           const ext = docItem.file.name?.split('.').pop() || 'pdf';
-          const nomeArquivoUnico = `envios/${Date.now()}-${docItem.file.name ?? 'documento'}.${ext}`;
-          const url = await uploadParaSupabase(docItem.file, nomeArquivoUnico);
+          const nomeFormatado = sanitizeFileName(docItem.tipo.replace(/ /g, '_'));
+          const nomeArquivoFinal = `${nomeFormatado}.${ext}`;
+          console.log(`caso: ${caso}`)
+          const pathNoStorage = `envios/${id}/${caso}/${nomeArquivoFinal}`;
+          const url = await uploadParaSupabase(docItem.file, pathNoStorage);
 
+  
           if (!url) {
-            console.warn(`Falha ao enviar ${docItem.tipo}`);
+            console.warn(`⚠️ Falha ao enviar ${docItem.tipo}`);
             continue;
           }
-
+  
           const doc: Documento = {
             name: docItem.file.name ?? 'documento.pdf',
             desc: docItem.tipo,
@@ -99,13 +128,19 @@ export default function NewDocumentScreen({ navigation }: Props) {
             date: new Date().toLocaleDateString(),
             size: docItem.file.size || 0,
           };
-
-          await salvarDocumento(doc);
+  
+          // Apenas logando no console, sem salvar no Firebase
           console.log(`✅ Documento ${docItem.tipo} enviado com sucesso para: ${url}`);
+          console.log('Metadados:', doc);
         }
       }
 
-      navigation.navigate('Send');
+      navigation.navigate('Send', {
+        user: {
+          email: email,
+          id: id,
+        }
+      })
     } catch (error) {
       console.error('Erro ao salvar todos os documentos:', error);
     }
@@ -169,6 +204,16 @@ export default function NewDocumentScreen({ navigation }: Props) {
   return (
     <View style={styles.View}>
       <Background />
+      <View style={styles.ViewBackIcon}>
+        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
+          onPress={() => navigation.navigate('Documents', {
+            user: {
+              email,
+              id,
+            },
+            caso: caso
+          })}/>
+      </View>
       <Text style={styles.Title}>Enviar documentos</Text>
 
       {renderFileInput(fileId, 'Documento Pessoais', () => pickDocumento(setFileId))}
@@ -181,6 +226,12 @@ export default function NewDocumentScreen({ navigation }: Props) {
           <Text style={styles.textSalvar}>Salvar</Text>
         </Pressable>
       </View>
+
+      {loading && (
+        <View style={styles.ViewModal}>
+          <Progress.Circle size={100} borderWidth={10} indeterminate={true} />
+        </View>
+      )}
     </View>
   );
 }
@@ -200,12 +251,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
     fontSize: 30,
-    marginTop: 100,
+    marginTop: 20,
     marginBottom: 53
   },
   viewBottom: {
     width: '100%',
     alignItems: 'center',
+  },
+  ViewBackIcon: {
+    padding: 16,
+    marginTop: 30,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  BackIcon: {
+    backgroundColor: '#B8B8B8',
+    borderRadius: 30,
+    padding: 4,
+    textAlign: 'center'
   },
   title: {
     color: '#0B0B0B',
@@ -287,5 +351,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 4,
     width: '100%',
+  },
+  ViewModal: {
+    backgroundColor: "#fff",
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    marginTop: 40,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    opacity: .8
   }
 });

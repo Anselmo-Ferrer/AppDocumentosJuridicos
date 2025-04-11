@@ -5,6 +5,8 @@ import { dbAccounts } from '../firebase/firebaseAccount';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import Toast from 'react-native-toast-message';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LoginAccount'>;
 
@@ -19,23 +21,56 @@ export default function LoginAccount({ navigation }: Props) {
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
+        // Pega o primeiro usuário que corresponde
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+  
+        // Agora você tem acesso a:
+        const emailUsuario = userData.email;
+        const senhaUsuario = userData.senha;
+        const idUsuario = userData.id;
+  
         console.log('Login bem-sucedido!');
-        navigation.navigate('Casos'); // ajuste o nome da rota conforme seu Stack
+        console.log('Usuário:', { emailUsuario, senhaUsuario, idUsuario });
+  
+        // Pode navegar e passar os dados se quiser
+        navigation.navigate('Casos', {
+          user: {
+            email: emailUsuario,
+            id: idUsuario,
+          }
+        });
       } else {
         console.warn('Email ou senha inválidos!');
+        showToast()
       }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
     }
   };
 
+  const showToast = () => {
+    Toast.show({
+      type: 'error',
+      text1: 'Email ou senha invalido',
+      text2: 'Tente novamente'
+    });
+  }
+
   return (
     <View style={styles.View}>
       <Background />
+      <View style={styles.ViewBackIcon}>
+        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
+          onPress={() => navigation.navigate('Start')}/>
+      </View>
+      <View style={styles.ToastView}>
+        <Toast/>
+      </View>
       <View style={styles.ViewTop}>
-        <Text style={styles.Title}>Criar conta</Text>
+        <Text style={styles.Title}>Entre em sua conta</Text>
         <Text style={styles.SubTitle}>
-          Ao criar uma conta você poderá fazer o envio dos documentos
+        Bem vindo de volta, estávamos sentindo sua falta
         </Text>
       </View>
       <View style={styles.ViewInputs}>
@@ -84,15 +119,30 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center'
   },
+  ToastView: {
+    marginBottom: 20
+  },
   ViewTop: {
     width: '80%',
+  },
+  ViewBackIcon: {
+    padding: 16,
+    marginTop: 30,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  BackIcon: {
+    backgroundColor: '#B8B8B8',
+    borderRadius: 30,
+    padding: 4,
+    textAlign: 'center'
   },
   Title: {
     color: '#1F41BB',
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
     fontSize: 30,
-    marginTop: 100,
   },
   SubTitle: {
     color: '#000',

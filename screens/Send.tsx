@@ -4,10 +4,17 @@ import Feather from '@expo/vector-icons/Feather';
 import Background from './Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Send'>;
+type SendRouteProp = RouteProp<RootStackParamList, 'Send'>;
 
 export default function SendScreen({ navigation }: Props) {
+
+  const route = useRoute<SendRouteProp>();
+  const { user } = route.params;
+  const { email, id } = user;
+
   return (
     <View style={styles.View}>
       <Background
@@ -22,7 +29,12 @@ export default function SendScreen({ navigation }: Props) {
       <View style={styles.ViewBottom}>
         <Pressable
           style={styles.ContinueButton}
-          onPress={() => navigation.navigate('Casos')}
+          onPress={() => navigation.navigate('Casos', {
+            user: {
+              email: email,
+              id: id,
+            }
+          })}
         >
           <Text style={styles.TextButton}>Continuar</Text>
         </Pressable>
@@ -71,7 +83,7 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: '#fff',
     borderRadius: 10,
-    marginTop: 53,
+    marginTop: 63,
     shadowColor: '#3B67E9',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,

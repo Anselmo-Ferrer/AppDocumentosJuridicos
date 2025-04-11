@@ -5,6 +5,8 @@ import { dbAccounts } from '../firebase/firebaseAccount';
 import { collection, addDoc } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import uuid from 'react-native-uuid';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateAccount'>;
 
@@ -20,17 +22,22 @@ export default function CreateAccount({ navigation }: Props) {
         console.warn('Preencha todos os campos');
         return;
       }
-
+  
+      const customId = uuid.v4() as string;
+  
       const docRef = await addDoc(collection(dbAccounts, 'users'), {
+        id: customId,
         name,
         email,
         cpf,
         senha,
         createdAt: new Date()
       });
-
-      console.log('Conta criada com ID: ', docRef.id);
-      navigation.navigate('LoginAccount'); // redireciona para tela de login
+  
+      console.log('Conta criada com ID customizado: ', customId);
+      console.log('Firestore ID gerado: ', docRef.id);
+  
+      navigation.navigate('LoginAccount');
     } catch (e) {
       console.error('Erro ao criar conta: ', e);
     }
@@ -39,6 +46,10 @@ export default function CreateAccount({ navigation }: Props) {
   return (
     <View style={styles.View}>
       <Background />
+      <View style={styles.ViewBackIcon}>
+        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
+          onPress={() => navigation.navigate('Start')}/>
+      </View>
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Criar conta</Text>
         <Text style={styles.SubTitle}>
@@ -57,29 +68,32 @@ export default function CreateAccount({ navigation }: Props) {
           placeholder="Email"
           placeholderTextColor="#9E9E9E"
           onChangeText={setEmail}
+          keyboardType="email-address"
         />
         <TextInput
           style={styles.Input}
           placeholder="CPF"
           placeholderTextColor="#9E9E9E"
           onChangeText={setCpf}
+          maxLength={11}
+          keyboardType="numeric"
         />
         <TextInput
           style={styles.Input}
           placeholder="Senha"
           placeholderTextColor="#9E9E9E"
           onChangeText={setSenha}
-          //secureTextEntry
+          secureTextEntry
         />
         <TextInput
           style={styles.Input}
           placeholder="Confirme sua senha"
           placeholderTextColor="#9E9E9E"
-          //secureTextEntry
+          secureTextEntry
         />
       </View>
       <Pressable style={styles.CreateAccountButton} onPress={criarConta}>
-        <Text style={styles.CreateAccountText}>Entrar</Text>
+        <Text style={styles.CreateAccountText}>Criar</Text>
       </Pressable>
       <Pressable
         style={styles.HaveAccountButton}
@@ -101,6 +115,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center'
   },
+  ViewBackIcon: {
+    padding: 16,
+    marginTop: 30,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  BackIcon: {
+    backgroundColor: '#B8B8B8',
+    borderRadius: 30,
+    padding: 4,
+    textAlign: 'center'
+  },
   ViewTop: {
     width: '80%',
   },
@@ -109,7 +136,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
     fontSize: 30,
-    marginTop: 100,
   },
   SubTitle: {
     color: '#000',

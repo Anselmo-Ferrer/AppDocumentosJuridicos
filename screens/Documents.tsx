@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -11,8 +11,11 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Background from './Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { supabase } from '../supabase/supabaseClient';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Documents'>;
+type DocumentsRouteProp = RouteProp<RootStackParamList, 'Documents'>;
 
 export default function DocumentsScreen({ navigation }: Props) {
 
@@ -23,40 +26,95 @@ export default function DocumentsScreen({ navigation }: Props) {
     { Id: 4, Name: 'Provas relacionadas ao caso', Date: '12/07/2020 23:45', Size: 1023123, Type: 'PDF', Status: 'Success' },
   ];
 
-  const convertFileSize = (size: number) => {
-    const sizeInMB = size / (1024 * 1024);
-    return `${sizeInMB.toFixed(2)} MB`;
+  const [documentos, setDocumetos] = useState<any[]>([]);
+
+  const route = useRoute<DocumentsRouteProp>();
+  const { user, caso } = route.params;
+  const { email, id } = user;
+
+  useEffect(() => {
+    exportarDocumentos();
+  }, []);
+
+  const exportarDocumentos = async () => {
+    const path = `envios/${id}/${caso}/`;
+  
+    const { data, error } = await supabase.storage
+      .from('documents')
+      .list(path);
+  
+    if (error) {
+      console.error('Erro ao listar documentos:', error);
+      return;
+    }
+  
+    const arquivos = data.filter(item => item.name && item.metadata?.eTag);
+    setDocumetos(arquivos);
+  
+    console.log('Documentos encontrados:', arquivos);
   };
+
+  const deletarArquivo = async (path: string) => {
+    const { data, error } = await supabase.storage
+      .from('documents')
+      .remove([path]);
+  
+    if (error) {
+      console.error('Erro ao deletar:', error.message);
+      return false;
+    }
+  
+    // Atualiza a lista de documentos removendo o item deletado
+    setDocumetos(prev => prev.filter(doc => `envios/${id}/${caso}/${doc.name}` !== path));
+  
+    return true;
+  };
+
 
   return (
     <View style={styles.View}>
       <Background />
+      <View style={styles.ViewBackIcon}>
+        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
+          onPress={() => navigation.navigate('Casos', {
+            user: {
+              email,
+              id,
+            }
+          })}/>
+      </View>
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Documentos</Text>
-        <Text style={styles.SubTitle}>caso 1 - processo de transito</Text>
+        <Text style={styles.SubTitle}>{caso.slice(2)}</Text>
       </View>
 
-      <ScrollView>
-        {file.map((item) => (
-          <View style={styles.CasosContainer} key={item.Id}>
-            <View style={styles.CasosContainerLeft}>
-              <Image
-                style={styles.pdfImg}
-                source={require('../assets/images/pdf.png')}
-              />
-              <View>
-                <Text style={styles.casosTitle}>{item.Name}</Text>
-                <Text>{item.Date}</Text>
-              </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+      {documentos.map((item, index) => (
+        <View style={styles.CasosContainer} key={index}>
+          <View style={styles.CasosContainerLeft}>
+            <Image
+              style={styles.pdfImg}
+              source={require('../assets/images/pdf.png')}
+            />
+            <View>
+              <Text style={styles.casosTitle}>{item.name.replace(/_/g, ' ').slice(0, -4)}</Text>
+              <Text>{item.metadata?.lastModified || 'sem data'}</Text>
             </View>
-            <AntDesign name="delete" size={24} color="gray" />
           </View>
-        ))}
+          <AntDesign name="delete" size={24} color="gray" onPress={() => deletarArquivo(`envios/${id}/${caso}/${item.name}`)}/>
+        </View>
+      ))}
       </ScrollView>
 
       <Pressable
         style={styles.NewDocumentButton}
-        onPress={() => navigation.navigate('NewDocument')}
+        onPress={() => navigation.navigate('NewDocument', {
+          user: {
+            email,
+            id,
+          },
+          caso: caso, // <-- esse é o nome da pasta/caso
+        })}
       >
         <Text style={styles.NewDocumentText}>Enviar</Text>
       </Pressable>
@@ -74,6 +132,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center'
   },
+  ViewBackIcon: {
+    padding: 16,
+    marginTop: 30,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  BackIcon: {
+    backgroundColor: '#B8B8B8',
+    borderRadius: 30,
+    padding: 4,
+    textAlign: 'center'
+  },
   ViewTop: {
     width: '80%',
   },
@@ -82,7 +153,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
     fontSize: 30,
-    marginTop: 100,
   },
   SubTitle: {
     color: '#000',

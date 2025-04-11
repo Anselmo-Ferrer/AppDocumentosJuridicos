@@ -18,6 +18,7 @@ import CasosScreen from './screens/Casos';
 import DocumentsScreen from './screens/Documents';
 import NewDocumentScreen from './screens/NewDocument';
 import SendScreen from './screens/Send';
+import CreateCasoScreen from './screens/CreateCaso'
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -40,6 +41,7 @@ export default function App() {
         <Stack.Screen name="LoginAccount" component={LoginAccount} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="Casos" component={CasosScreen} />
+        <Stack.Screen name="CreateCaso" component={CreateCasoScreen} />
         <Stack.Screen name="Documents" component={DocumentsScreen} />
         <Stack.Screen name="NewDocument" component={NewDocumentScreen} />
         <Stack.Screen name="Send" component={SendScreen} />

@@ -1,21 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Image,
   StyleSheet,
   View,
   Text,
   Pressable,
   TextInput,
   ScrollView,
+  TouchableOpacity
 } from 'react-native';
 import Background from './Background';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { supabase } from '../supabase/supabaseClient';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Casos'>;
+type CasosRouteProp = RouteProp<RootStackParamList, 'Casos'>;
 
-export default function CasosScreen({ navigation }: Props) {
+export default function CreateCaso({ navigation }: Props) {
+
+  const route = useRoute<CasosRouteProp>();
+  const { user } = route.params;
+  const { email, id } = user;
+
+  const [casos, setCasos] = useState<any[]>([]);
+  const [numCasos, setNumCasos] = useState<number>();
+  const [casoSelected, setCasoSelected] = useState<string>('')
+
+  useEffect(() => {
+    exportarCasos()
+  }, [])
+
   const file = [
     { Id: 1, Name: 'caso 1 - processo de transito', Date: '01/01/2025', Status: 'Recusado' },
     { Id: 2, Name: 'caso 2 - processo de transito', Date: '05/04/2024', Status: 'Aprovado' },
@@ -24,42 +40,85 @@ export default function CasosScreen({ navigation }: Props) {
     { Id: 5, Name: 'caso 5 - processo de transito', Date: '03/08/2023', Status: 'Aprovado' },
   ];
 
+  const exportarCasos = async () => {
+    const path = `envios/${id}/`;
+  
+    const { data, error } = await supabase.storage
+      .from('documents')
+      .list(path, {
+        limit: 100,
+        offset: 0,
+      });
+  
+    if (error) {
+      console.error('Erro ao listar casos:', error);
+      return;
+    }
+  
+    // filtra só os diretórios (pastas)
+    const pastas = data.filter(item => item.name && item.metadata?.eTag === undefined);
+  
+    setCasos(pastas); // salva os "casos"
+    setNumCasos(pastas.length);
+  
+    console.log(`Usuário ${id} tem ${pastas.length} caso(s):`);
+  };
+
   return (
     <View style={styles.View}>
       <Background />
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Processos Ativos</Text>
-        <Text style={styles.SubTitle}>20 processos em andamento</Text>
+        <Text style={styles.SubTitle}>{`${numCasos} processos em andamento`}</Text>
       </View>
 
-      <ScrollView>
-        {file.map((item) => (
-          <View style={styles.CasosContainer} key={item.Id}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {casos.map((item, index) => (
+          <TouchableOpacity 
+            style={styles.CasosContainer} 
+            key={item.Id} 
+            onPress={() =>
+              navigation.navigate('Documents', {
+                user: {
+                  email,
+                  id,
+                },
+                caso: item.name, // <-- esse é o nome da pasta/caso
+              })
+            }
+          >
             <View>
-              <Text style={styles.casosTitle}>{item.Name}</Text>
+              <View style={styles.CasosNameView}>
+                <Text style={styles.casosIndex}>{index+1}</Text>
+                <Text style={styles.casosTitle}>{item.name.slice(2)}</Text>
+              </View>
               <Text
                 style={[
                   styles.casosStatus,
-                  item.Status === 'Aprovado'
-                    ? { backgroundColor: '#55C06D' }
-                    : item.Status === 'Recusado'
-                    ? { backgroundColor: '#EF5350' }
-                    : item.Status === 'Em andamento'
-                    ? { backgroundColor: '#F8C33E' }
-                    : {},
+                  // item.Status === 'Aprovado'
+                  //   ? { backgroundColor: '#55C06D' }
+                  //   : item.Status === 'Recusado'
+                  //   ? { backgroundColor: '#EF5350' }
+                  //   : item.Status === 'Em andamento'
+                  //   ? { backgroundColor: '#F8C33E' }
+                  //   : {},
                 ]}
               >
-                {item.Status}
+                Aprovado
               </Text>
             </View>
-            <AntDesign name="delete" size={24} color="gray" />
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
       <Pressable
         style={styles.NewDocumentButton}
-        onPress={() => navigation.navigate('Documents')}
+        onPress={() => navigation.navigate('CreateCaso', {
+          user: {
+            email: email,
+            id: id,
+          }
+        })}
       >
         <Text style={styles.NewDocumentText}>Criar</Text>
       </Pressable>
@@ -115,10 +174,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
+  CasosNameView: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 4
+  },
   casosTitle: {
     color: '#000',
     fontFamily: 'Poppins_500Medium',
     marginBottom: 5,
+  },
+  casosIndex: {
+    backgroundColor: '#CACACA',
+    width: 21,
+    height: 21,
+    borderRadius: 10.5,
+    textAlign: 'center',
+    fontFamily: 'Poppins_600SemiBold',
   },
   casosStatus: {
     width: 110,
@@ -128,6 +200,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Poppins_600SemiBold',
     color: '#fff',
+    backgroundColor: '#55C06D',
   },
   NewDocumentButton: {
     width: 357,
