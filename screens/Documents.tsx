@@ -12,7 +12,6 @@ import Background from './Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { supabase } from '../supabase/supabaseClient';
 import { deletarArquivo, listarArquivos } from '../supabase/storageUtils';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Documents'>;
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   BackIcon: {
-    backgroundColor: '#B8B8B8',
+    backgroundColor: '#CBD6FF',
     borderRadius: 30,
     padding: 4,
     textAlign: 'center'

@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   BackIcon: {
-    backgroundColor: '#B8B8B8',
+    backgroundColor: '#CBD6FF',
     borderRadius: 30,
     padding: 4,
     textAlign: 'center'

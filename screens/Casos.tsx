@@ -90,6 +90,7 @@ export default function CreateCaso({ navigation }: Props) {
             id: id,
           }
         })}
+        // onPress={() => navigation.navigate('Progress')}
       >
         <Text style={styles.NewDocumentText}>Criar</Text>
       </Pressable>
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   casosIndex: {
-    backgroundColor: '#CACACA',
+    backgroundColor: '#CBD6FF',
     width: 21,
     height: 21,
     borderRadius: 10.5,
