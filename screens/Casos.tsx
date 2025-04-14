@@ -84,13 +84,18 @@ export default function CreateCaso({ navigation }: Props) {
 
       <Pressable
         style={styles.NewDocumentButton}
-        onPress={() => navigation.navigate('CreateCaso', {
+        // onPress={() => navigation.navigate('CreateCaso', {
+        //   user: {
+        //     email: email,
+        //     id: id,
+        //   }
+        // })}
+        onPress={() => navigation.navigate('RecusedCaso', {
           user: {
             email: email,
             id: id,
           }
         })}
-        // onPress={() => navigation.navigate('Progress')}
       >
         <Text style={styles.NewDocumentText}>Criar</Text>
       </Pressable>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Pressable, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Pressable, TextInput, ScrollView } from 'react-native';
 import Background from './Background';
 import { dbAccounts } from '../firebase/firebaseAccount';
 import { collection, addDoc } from 'firebase/firestore';
@@ -7,6 +7,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import uuid from 'react-native-uuid';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import RNPickerSelect from 'react-native-picker-select';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateAccount'>;
 
@@ -15,6 +17,14 @@ export default function CreateAccount({ navigation }: Props) {
   const [email, setEmail] = useState<string>();
   const [cpf, setCpf] = useState<string>();
   const [senha, setSenha] = useState<string>();
+  const [role, setRole] = useState('');
+
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: 'Cliente', value: 'Cliente' },
+    { label: 'Advogado', value: 'Advogado' },
+  ]);
 
   const criarConta = async () => {
     try {
@@ -57,6 +67,21 @@ export default function CreateAccount({ navigation }: Props) {
         </Text>
       </View>
       <View style={styles.ViewInputs}>
+        <ScrollView>
+        <DropDownPicker
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+          placeholder="Selecione seu cargo"
+          style={styles.pickerStyle}
+          containerStyle={styles.pickerContainer}
+          dropDownContainerStyle={styles.pickerDropdown}
+          textStyle={{ fontFamily: 'Poppins_500Medium', fontSize: 16,  }}
+          placeholderStyle={{ color: '#9E9E9E', fontFamily: 'Poppins_500Medium' }}
+        />
         <TextInput
           style={styles.Input}
           placeholder="Nome"
@@ -91,6 +116,7 @@ export default function CreateAccount({ navigation }: Props) {
           placeholderTextColor="#9E9E9E"
           secureTextEntry
         />
+        </ScrollView>
       </View>
       <Pressable style={styles.CreateAccountButton} onPress={criarConta}>
         <Text style={styles.CreateAccountText}>Criar</Text>
@@ -146,7 +172,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   ViewInputs: {
-    width: '80%',
+    width: '100%',
+    height: 430,
     alignItems: 'center',
     gap: 26,
     marginTop: 53
@@ -163,6 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F4FF',
     fontFamily: 'Poppins_500Medium',
     fontSize: 16,
+    marginBottom: 26
   },
   CreateAccountButton: {
     width: 357,
@@ -202,5 +230,26 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'normal',
     fontFamily: 'Poppins_600SemiBold',
-  }
+  },
+
+
+
+  pickerStyle: {
+  width: '100%',
+  backgroundColor: '#F1F4FF',
+  borderColor: '#fff',
+  borderRadius: 10,
+  paddingVertical: 20,
+  paddingLeft: 20,
+  paddingRight: 35,
+  marginBottom: 26,
+},
+pickerContainer: {
+  width: 357,
+},
+pickerDropdown: {
+  width: 357,
+  backgroundColor: '#fff',
+  borderColor: '#ccc',
+}
 })

@@ -1,10 +1,20 @@
 import {
   Image, StyleSheet, View, Text, TouchableOpacity, Pressable,
 } from 'react-native';
-import Background from './Background';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Background from './Background';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/navigation';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
-export default function ProgressBarScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, 'Progress'>;
+type ProgressRouteProp = RouteProp<RootStackParamList, 'Progress'>;
+
+export default function ProgressBarScreen({ navigation }: Props) {
+
+  const route = useRoute<ProgressRouteProp>();
+  const { user } = route.params;
+  const { email, id } = user;
 
   const stats = [
     { title: 'Petição inicial enviada', done: true },
@@ -16,6 +26,15 @@ export default function ProgressBarScreen() {
   return (
     <View style={styles.View}>
       <Background />
+      <View style={styles.ViewBackIcon}>
+        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
+          onPress={() => navigation.navigate('Casos', {
+            user: {
+              email,
+              id,
+            }
+          })}/>
+      </View>
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Processos Ativos</Text>
         <Text style={styles.SubTitle}>Verifique a atualizacao do processo</Text>
@@ -59,6 +78,19 @@ const styles = StyleSheet.create({
     padding: 20,
     display: 'flex',
     alignItems: 'center',
+  },
+  ViewBackIcon: {
+    padding: 16,
+    marginTop: 30,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  BackIcon: {
+    backgroundColor: '#CBD6FF',
+    borderRadius: 30,
+    padding: 4,
+    textAlign: 'center'
   },
   ContainerStats: {
     display: 'flex',

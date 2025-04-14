@@ -20,6 +20,7 @@ import NewDocumentScreen from './screens/NewDocument';
 import SendScreen from './screens/Send';
 import CreateCasoScreen from './screens/CreateCaso'
 import ProgressBarScreen from './screens/ProgressBar';
+import CasoRecusedScreen from './screens/CasoRecused';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -43,6 +44,7 @@ export default function App() {
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="Casos" component={CasosScreen} />
         <Stack.Screen name="Progress" component={ProgressBarScreen} />
+        <Stack.Screen name="RecusedCaso" component={CasoRecusedScreen} />
         <Stack.Screen name="CreateCaso" component={CreateCasoScreen} />
         <Stack.Screen name="Documents" component={DocumentsScreen} />
         <Stack.Screen name="NewDocument" component={NewDocumentScreen} />
