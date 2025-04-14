@@ -13,61 +13,37 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { supabase } from '../supabase/supabaseClient';
+import { deletarArquivo, listarArquivos } from '../supabase/storageUtils';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Documents'>;
 type DocumentsRouteProp = RouteProp<RootStackParamList, 'Documents'>;
 
 export default function DocumentsScreen({ navigation }: Props) {
 
-  const file = [
-    { Id: 1, Name: 'Foto Identidade', Date: '01/01/2025 23:45', Size: 1023123, Type: 'PDF', Status: 'Declined' },
-    { Id: 2, Name: 'Comprovante de endereco', Date: '05/04/2024 23:45', Size: 1023123, Type: 'PNG', Status: 'Success' },
-    { Id: 3, Name: 'Comprovante de renda', Date: '03/08/2023 23:45', Size: 1023123, Type: 'PDF', Status: 'Declined' },
-    { Id: 4, Name: 'Provas relacionadas ao caso', Date: '12/07/2020 23:45', Size: 1023123, Type: 'PDF', Status: 'Success' },
-  ];
-
-  const [documentos, setDocumetos] = useState<any[]>([]);
+  const [documentos, setDocumentos] = useState<any[]>([]);
 
   const route = useRoute<DocumentsRouteProp>();
   const { user, caso } = route.params;
   const { email, id } = user;
 
   useEffect(() => {
-    exportarDocumentos();
+    carregarDocumentos();
   }, []);
 
-  const exportarDocumentos = async () => {
-    const path = `envios/${id}/${caso}/`;
-  
-    const { data, error } = await supabase.storage
-      .from('documents')
-      .list(path);
-  
-    if (error) {
-      console.error('Erro ao listar documentos:', error);
-      return;
-    }
-  
-    const arquivos = data.filter(item => item.name && item.metadata?.eTag);
-    setDocumetos(arquivos);
-  
-    console.log('Documentos encontrados:', arquivos);
+  const carregarDocumentos = async () => {
+    const resultado = await listarArquivos(`envios/${id}/${caso}/`);
+    setDocumentos(resultado);
   };
 
-  const deletarArquivo = async (path: string) => {
-    const { data, error } = await supabase.storage
-      .from('documents')
-      .remove([path]);
+  const handleDelete = async (itemName: string) => {
+    const path = `envios/${id}/${caso}/${itemName}`;
+    const sucesso = await deletarArquivo(path);
   
-    if (error) {
-      console.error('Erro ao deletar:', error.message);
-      return false;
+    if (sucesso) {
+      setDocumentos(prev =>
+        prev.filter(doc => doc.name !== itemName)
+      );
     }
-  
-    // Atualiza a lista de documentos removendo o item deletado
-    setDocumetos(prev => prev.filter(doc => `envios/${id}/${caso}/${doc.name}` !== path));
-  
-    return true;
   };
 
 
@@ -101,7 +77,7 @@ export default function DocumentsScreen({ navigation }: Props) {
               <Text>{item.metadata?.lastModified || 'sem data'}</Text>
             </View>
           </View>
-          <AntDesign name="delete" size={24} color="gray" onPress={() => deletarArquivo(`envios/${id}/${caso}/${item.name}`)}/>
+          <AntDesign name="delete" size={24} color="gray" onPress={() => handleDelete(item.name)}/>
         </View>
       ))}
       </ScrollView>

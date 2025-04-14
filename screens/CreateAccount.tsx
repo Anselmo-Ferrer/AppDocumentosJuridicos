@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View, Text, Pressable, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Pressable, TextInput } from 'react-native';
 import Background from './Background';
 import { dbAccounts } from '../firebase/firebaseAccount';
 import { collection, addDoc } from 'firebase/firestore';

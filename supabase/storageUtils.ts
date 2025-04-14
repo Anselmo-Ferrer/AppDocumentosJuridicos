@@ -1,8 +1,6 @@
 import { supabase } from "./supabaseClient";
 
-const exportarCasos = async (id: number) => {
-  const path = `envios/${id}/`;
-
+export const exportarSupabase = async (path: string) => {
   const { data, error } = await supabase.storage
     .from('documents')
     .list(path, {
@@ -11,15 +9,34 @@ const exportarCasos = async (id: number) => {
     });
 
   if (error) {
-    console.error('Erro ao listar casos:', error);
-    return;
+    console.error('Erro ao listar arquivos:', error.message);
+    return [];
   }
 
-  // filtra só os diretórios (pastas)
-  const pastas = data.filter(item => item.name && item.metadata?.eTag === undefined);
+  return data;
+};
 
-  // setCasos(pastas); // salva os "casos"
-  // setNumCasos(pastas.length);
+export const listarPastas = async (path: string) => {
+  const itens = await exportarSupabase(path);
+  return itens.filter((item) => item.name && !item.metadata?.eTag);
+};
 
-  return pastas
+export const listarArquivos = async (path: string) => {
+  const itens = await exportarSupabase(path);
+  return itens.filter((item) => item.name && item.metadata?.eTag);
+};
+
+
+export const deletarArquivo = async (path: string): Promise<boolean> => {
+  const { error } = await supabase.storage
+    .from('documents')
+    .remove([path]);
+
+  if (error) {
+    console.error('❌ Erro ao deletar arquivo:', error.message);
+    return false;
+  }
+
+  console.log(`✅ Arquivo deletado com sucesso: ${path}`);
+  return true;
 };

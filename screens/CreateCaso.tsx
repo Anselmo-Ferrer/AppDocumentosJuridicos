@@ -6,6 +6,7 @@ import { RootStackParamList } from '../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { supabase } from '../supabase/supabaseClient';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { listarPastas } from '../supabase/storageUtils';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateCaso'>;
 type CreateCasoRouteProp = RouteProp<RootStackParamList, 'CreateCaso'>;
@@ -17,33 +18,15 @@ export default function CreateCasoScreen({ navigation }: Props) {
 
   const route = useRoute<CreateCasoRouteProp>();
   const { user } = route.params;
-  const { email, id } = user;
-
+  const { email, id } = user
 
   useEffect(() => {
-    contarCasosDoUsuario()
-  }, [])
+    carregarCasos();
+  }, []);
 
-  const contarCasosDoUsuario = async () => {
-    const path = `envios/${id}/`;
-
-    const { data, error } = await supabase.storage
-      .from('documents')
-      .list(path, {
-        limit: 100, // opcional
-        offset: 0,
-      });
-
-    if (error) {
-      console.error('Erro ao listar casos:', error);
-      return 0;
-    }
-
-    // filtra só os diretórios (que são os "casos")
-    const pastas = data?.filter(item => item.name && item.metadata?.eTag === undefined);
-
-    // console.log(`Usuário ${userId} tem ${pastas.length} caso(s)`);
-    setNumCasos(pastas.length+1);
+  const carregarCasos = async () => {
+    const resultado = await listarPastas(`envios/${id}/`);
+    setNumCasos(resultado.length-1)
   };
 
   const criarCaso = async () => {
@@ -68,7 +51,7 @@ export default function CreateCasoScreen({ navigation }: Props) {
         email,
         id,
       },
-      caso: `${numCasos}-${casoName}`, // <-- esse é o nome da pasta/caso
+      caso: `${numCasos}-${casoName}`,
     })
   };
   

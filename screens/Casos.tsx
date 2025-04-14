@@ -4,16 +4,14 @@ import {
   View,
   Text,
   Pressable,
-  TextInput,
   ScrollView,
   TouchableOpacity
 } from 'react-native';
 import Background from './Background';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { supabase } from '../supabase/supabaseClient';
+import { listarPastas } from '../supabase/storageUtils';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Casos'>;
 type CasosRouteProp = RouteProp<RootStackParamList, 'Casos'>;
@@ -26,42 +24,15 @@ export default function CreateCaso({ navigation }: Props) {
 
   const [casos, setCasos] = useState<any[]>([]);
   const [numCasos, setNumCasos] = useState<number>();
-  const [casoSelected, setCasoSelected] = useState<string>('')
 
   useEffect(() => {
-    exportarCasos()
-  }, [])
+    carregarCasos();
+  }, []);
 
-  const file = [
-    { Id: 1, Name: 'caso 1 - processo de transito', Date: '01/01/2025', Status: 'Recusado' },
-    { Id: 2, Name: 'caso 2 - processo de transito', Date: '05/04/2024', Status: 'Aprovado' },
-    { Id: 3, Name: 'caso 3 - processo de transito', Date: '03/08/2023', Status: 'Em andamento' },
-    { Id: 4, Name: 'caso 4 - processo de transito', Date: '03/08/2023', Status: 'Aprovado' },
-    { Id: 5, Name: 'caso 5 - processo de transito', Date: '03/08/2023', Status: 'Aprovado' },
-  ];
-
-  const exportarCasos = async () => {
-    const path = `envios/${id}/`;
-  
-    const { data, error } = await supabase.storage
-      .from('documents')
-      .list(path, {
-        limit: 100,
-        offset: 0,
-      });
-  
-    if (error) {
-      console.error('Erro ao listar casos:', error);
-      return;
-    }
-  
-    // filtra só os diretórios (pastas)
-    const pastas = data.filter(item => item.name && item.metadata?.eTag === undefined);
-  
-    setCasos(pastas); // salva os "casos"
-    setNumCasos(pastas.length);
-  
-    console.log(`Usuário ${id} tem ${pastas.length} caso(s):`);
+  const carregarCasos = async () => {
+    const resultado = await listarPastas(`envios/${id}/`);
+    setNumCasos(resultado.length)
+    setCasos(resultado);
   };
 
   return (
@@ -83,7 +54,7 @@ export default function CreateCaso({ navigation }: Props) {
                   email,
                   id,
                 },
-                caso: item.name, // <-- esse é o nome da pasta/caso
+                caso: item.name,
               })
             }
           >
