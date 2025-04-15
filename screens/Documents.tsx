@@ -23,7 +23,7 @@ export default function DocumentsScreen({ navigation }: Props) {
 
   const route = useRoute<DocumentsRouteProp>();
   const { user, caso } = route.params;
-  const { email, id } = user;
+  const { name, email, id } = user;
 
   useEffect(() => {
     carregarDocumentos();
@@ -53,8 +53,9 @@ export default function DocumentsScreen({ navigation }: Props) {
         <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
           onPress={() => navigation.navigate('Casos', {
             user: {
-              email,
-              id,
+              name: name,
+              email: email,
+              id: id,
             }
           })}/>
       </View>
@@ -85,8 +86,9 @@ export default function DocumentsScreen({ navigation }: Props) {
         style={styles.NewDocumentButton}
         onPress={() => navigation.navigate('NewDocument', {
           user: {
-            email,
-            id,
+            name: name,
+            email: email,
+            id: id,
           },
           caso: caso, // <-- esse é o nome da pasta/caso
         })}

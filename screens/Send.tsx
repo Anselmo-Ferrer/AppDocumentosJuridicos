@@ -13,7 +13,7 @@ export default function SendScreen({ navigation }: Props) {
 
   const route = useRoute<SendRouteProp>();
   const { user } = route.params;
-  const { email, id } = user;
+  const { name, email, id } = user;
 
   return (
     <View style={styles.View}>
@@ -31,6 +31,7 @@ export default function SendScreen({ navigation }: Props) {
           style={styles.ContinueButton}
           onPress={() => navigation.navigate('Casos', {
             user: {
+              name: name,
               email: email,
               id: id,
             }

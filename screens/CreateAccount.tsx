@@ -7,7 +7,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import uuid from 'react-native-uuid';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import RNPickerSelect from 'react-native-picker-select';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateAccount'>;
@@ -17,7 +16,7 @@ export default function CreateAccount({ navigation }: Props) {
   const [email, setEmail] = useState<string>();
   const [cpf, setCpf] = useState<string>();
   const [senha, setSenha] = useState<string>();
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState<string>();
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -41,6 +40,7 @@ export default function CreateAccount({ navigation }: Props) {
         email,
         cpf,
         senha,
+        role,
         createdAt: new Date()
       });
   
@@ -69,6 +69,7 @@ export default function CreateAccount({ navigation }: Props) {
       <View style={styles.ViewInputs}>
         <ScrollView>
         <DropDownPicker
+          onChangeValue={(val) => val !== null && setRole(val)}
           open={open}
           value={value}
           items={items}

@@ -14,7 +14,7 @@ export default function ProgressBarScreen({ navigation }: Props) {
 
   const route = useRoute<ProgressRouteProp>();
   const { user } = route.params;
-  const { email, id } = user;
+  const { name, email, id } = user;
 
   const stats = [
     { title: 'Petição inicial enviada', done: true },
@@ -30,8 +30,9 @@ export default function ProgressBarScreen({ navigation }: Props) {
         <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
           onPress={() => navigation.navigate('Casos', {
             user: {
-              email,
-              id,
+              name: name,
+              email: email,
+              id: id,
             }
           })}/>
       </View>

@@ -20,7 +20,7 @@ export default function CreateCaso({ navigation }: Props) {
 
   const route = useRoute<CasosRouteProp>();
   const { user } = route.params;
-  const { email, id } = user;
+  const { name, email, id } = user;
 
   const [casos, setCasos] = useState<any[]>([]);
   const [numCasos, setNumCasos] = useState<number>();
@@ -47,12 +47,13 @@ export default function CreateCaso({ navigation }: Props) {
         {casos.map((item, index) => (
           <TouchableOpacity 
             style={styles.CasosContainer} 
-            key={item.Id} 
+            key={index} 
             onPress={() =>
               navigation.navigate('Documents', {
                 user: {
-                  email,
-                  id,
+                  name: name,
+                  email: email,
+                  id: id,
                 },
                 caso: item.name,
               })
@@ -84,18 +85,19 @@ export default function CreateCaso({ navigation }: Props) {
 
       <Pressable
         style={styles.NewDocumentButton}
-        // onPress={() => navigation.navigate('CreateCaso', {
+        onPress={() => navigation.navigate('CreateCaso', {
+          user: {
+            name: name,
+            email: email,
+            id: id,
+          }
+        })}
+        // onPress={() => navigation.navigate('RecusedCaso', {
         //   user: {
         //     email: email,
         //     id: id,
         //   }
         // })}
-        onPress={() => navigation.navigate('RecusedCaso', {
-          user: {
-            email: email,
-            id: id,
-          }
-        })}
       >
         <Text style={styles.NewDocumentText}>Criar</Text>
       </Pressable>

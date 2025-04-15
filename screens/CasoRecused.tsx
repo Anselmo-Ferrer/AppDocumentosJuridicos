@@ -16,7 +16,7 @@ export default function CasoRecusedScreen({ navigation }: Props) {
 
   const route = useRoute<CasoRecusedRouteProp>();
   const { user } = route.params;
-  const { email, id } = user;
+  const { name, email, id } = user;
 
   return (
     <View style={styles.View}>
@@ -25,8 +25,9 @@ export default function CasoRecusedScreen({ navigation }: Props) {
         <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
           onPress={() => navigation.navigate('Casos', {
             user: {
-              email,
-              id,
+              name: name,
+              email: email,
+              id: id,
             }
           })}/>
       </View>

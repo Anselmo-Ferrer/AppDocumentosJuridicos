@@ -7,6 +7,9 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { supabase } from '../supabase/supabaseClient';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { listarPastas } from '../supabase/storageUtils';
+import { dbAccounts } from '../firebase/firebaseAccount';
+import { collection, addDoc } from 'firebase/firestore';
+import uuid from 'react-native-uuid';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateCaso'>;
 type CreateCasoRouteProp = RouteProp<RootStackParamList, 'CreateCaso'>;
@@ -18,7 +21,7 @@ export default function CreateCasoScreen({ navigation }: Props) {
 
   const route = useRoute<CreateCasoRouteProp>();
   const { user } = route.params;
-  const { email, id } = user
+  const { name, email, id } = user
 
   useEffect(() => {
     carregarCasos();
@@ -30,7 +33,23 @@ export default function CreateCasoScreen({ navigation }: Props) {
   };
 
   const criarCaso = async () => {
-    const caminho = `envios/${id}/${numCasos}-${casoName}/.keep.txt`;
+    const customId = uuid.v4() as string;
+
+    const docRef = await addDoc(collection(dbAccounts, 'casosProgress'), {
+      casoId: customId,
+      client: name,
+      clientId: id,
+      advogadoName: '',
+      advogadoId: '',
+      casoName: `${numCasos}-${casoName}`,
+      casoStatus: 'Em analise',
+      createdAt: new Date()
+    });
+
+    console.log('caso criada com ID customizado: ', customId);
+    console.log('Caso Firestore ID gerado: ', docRef.id);
+
+    const caminho = `envios/${id}/${numCasos}-${casoName}_${customId}/.keep.txt`;
   
     const blob = new Blob(['pasta criada'], { type: 'text/plain' });
   
@@ -48,10 +67,11 @@ export default function CreateCasoScreen({ navigation }: Props) {
 
     navigation.navigate('NewDocument', {
       user: {
-        email,
-        id,
+        name: name,
+        email: email,
+        id: id,
       },
-      caso: `${numCasos}-${casoName}`,
+      caso: `${numCasos}-${casoName}_${customId}`,
     })
   };
   
@@ -65,8 +85,9 @@ export default function CreateCasoScreen({ navigation }: Props) {
         <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
           onPress={() => navigation.navigate('Casos', {
             user: {
-              email,
-              id,
+              name: name,
+              email: email,
+              id: id,
             }
           })}/>
       </View>

@@ -35,7 +35,7 @@ export default function NewDocumentScreen({ navigation }: Props) {
   
   const route = useRoute<NewDocumentRouteProp>();
   const { user, caso } = route.params;
-  const { email, id } = user;
+  const { name, email, id } = user;
 
   const uploadParaSupabase = async (file: DocumentPicker.DocumentPickerAsset, nomeCustomizado: string): Promise<string | null> => {
     setLoading(true)
@@ -137,6 +137,7 @@ export default function NewDocumentScreen({ navigation }: Props) {
 
       navigation.navigate('Send', {
         user: {
+          name: name,
           email: email,
           id: id,
         }
@@ -208,8 +209,9 @@ export default function NewDocumentScreen({ navigation }: Props) {
         <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
           onPress={() => navigation.navigate('Documents', {
             user: {
-              email,
-              id,
+              name: name,
+              email: email,
+              id: id,
             },
             caso: caso
           })}/>

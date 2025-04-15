@@ -26,20 +26,35 @@ export default function LoginAccount({ navigation }: Props) {
         const userData = userDoc.data();
   
         // Agora você tem acesso a:
+        const nameUsuario = userData.name;
         const emailUsuario = userData.email;
         const senhaUsuario = userData.senha;
         const idUsuario = userData.id;
+        const roleUsusuario = userData.role;
   
         console.log('Login bem-sucedido!');
-        console.log('Usuário:', { emailUsuario, senhaUsuario, idUsuario });
+        console.log('Usuário:', { emailUsuario, senhaUsuario, idUsuario, roleUsusuario });
+
+        if (roleUsusuario === 'Advogado') {
+          navigation.navigate('CasosList', {
+            user: {
+              name: nameUsuario,
+              email: emailUsuario,
+              id: idUsuario,
+            }
+          });
+        } else {
+          navigation.navigate('Casos', {
+            user: {
+              name: nameUsuario,
+              email: emailUsuario,
+              id: idUsuario,
+            }
+          });
+        }
   
         // Pode navegar e passar os dados se quiser
-        navigation.navigate('Casos', {
-          user: {
-            email: emailUsuario,
-            id: idUsuario,
-          }
-        });
+        
       } else {
         console.warn('Email ou senha inválidos!');
         showToast()

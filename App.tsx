@@ -21,6 +21,10 @@ import SendScreen from './screens/Send';
 import CreateCasoScreen from './screens/CreateCaso'
 import ProgressBarScreen from './screens/ProgressBar';
 import CasoRecusedScreen from './screens/CasoRecused';
+import CasosList from './screens/Admin/CasosList';
+import LawyerCases from './screens/Admin/LawyerCases';
+import CaseInformations from './screens/Admin/CaseInformations';
+import CaseDocuments from './screens/Admin/CaseDocuments';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -49,6 +53,11 @@ export default function App() {
         <Stack.Screen name="Documents" component={DocumentsScreen} />
         <Stack.Screen name="NewDocument" component={NewDocumentScreen} />
         <Stack.Screen name="Send" component={SendScreen} />
+
+        <Stack.Screen name="CasosList" component={CasosList} />
+        <Stack.Screen name="LawyerCases" component={LawyerCases} />
+        <Stack.Screen name="CaseInformations" component={CaseInformations} />
+        <Stack.Screen name="CaseDocuments" component={CaseDocuments} />
       </Stack.Navigator>
     </NavigationContainer>
   );
