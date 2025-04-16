@@ -84,13 +84,13 @@ export default function LawyerCases({ navigation }: Props) {
               <Text
                 style={[
                   styles.casosStatus,
-                  // item.Status === 'Aprovado'
-                  //   ? { backgroundColor: '#55C06D' }
-                  //   : item.Status === 'Recusado'
-                  //   ? { backgroundColor: '#EF5350' }
-                  //   : item.Status === 'Em andamento'
-                  //   ? { backgroundColor: '#F8C33E' }
-                  //   : {},
+                  caso.casoStatus === 'Aprovado'
+                    ? { backgroundColor: '#55C06D' }
+                    : caso.casoStatus === 'Recusado'
+                    ? { backgroundColor: '#EF5350' }
+                    : caso.casoStatus === 'Em andamento'
+                    ? { backgroundColor: '#F8C33E' }
+                    : {},
                 ]}
               >
                 {caso.casoStatus}
@@ -121,7 +121,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
     fontSize: 30,
-    marginTop: 100,
   },
   SubTitle: {
     color: '#000',

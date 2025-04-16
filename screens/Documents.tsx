@@ -61,7 +61,7 @@ export default function DocumentsScreen({ navigation }: Props) {
       </View>
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Documentos</Text>
-        <Text style={styles.SubTitle}>{caso.slice(2)}</Text>
+        <Text style={styles.SubTitle}>{caso.split('-').slice(2).join('-').split('_')[0]}</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>

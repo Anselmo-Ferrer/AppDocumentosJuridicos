@@ -45,7 +45,7 @@ export default function CaseInformations({ navigation }: Props) {
       await updateDoc(docRef, {
         advogadoId: id,
         advogadoName: name,
-        casoStatus: 'Em andamento',
+        casoStatus: 'Aprovado',
       });
       Alert.alert('✅ Caso aprovado!');
       navigation.goBack();

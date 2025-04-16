@@ -12,6 +12,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { listarPastas } from '../supabase/storageUtils';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { dbAccounts } from '../firebase/firebaseAccount';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Casos'>;
 type CasosRouteProp = RouteProp<RootStackParamList, 'Casos'>;
@@ -26,14 +28,71 @@ export default function CreateCaso({ navigation }: Props) {
   const [numCasos, setNumCasos] = useState<number>();
 
   useEffect(() => {
-    carregarCasos();
+    buscarMeusCasos();
   }, []);
 
-  const carregarCasos = async () => {
-    const resultado = await listarPastas(`envios/${id}/`);
-    setNumCasos(resultado.length)
-    setCasos(resultado);
+  // const carregarCasos = async () => {
+  //   const resultado = await listarPastas(`envios/${id}/`);
+  //   setNumCasos(resultado.length)
+  //   setCasos(resultado);
+  // };
+
+
+  const buscarMeusCasos = async () => {
+    try {
+      const q = query(
+        collection(dbAccounts, 'casosProgress'),
+        where('clientId', '==', id)
+      );
+
+      const snapshot = await getDocs(q);
+      const casos: any[] = [];
+
+      snapshot.forEach((doc) => {
+        casos.push({ ...doc.data(), firebaseId: doc.id });
+      });
+
+      setCasos(casos);
+    } catch (error) {
+      console.error('Erro ao buscar casos assumidos:', error);
+    }
   };
+
+
+  const abrirTela = (casoPath: string, casoStatus: string) => {
+    if (casoStatus === 'Recusado') {
+      navigation.navigate('RecusedCaso', {
+        user: {
+          name: name,
+          email: email,
+          id: id,
+        },
+        caso: casoPath,
+      })
+    } else if(casoStatus === 'Em andamento') {
+      navigation.navigate('Progress', {
+        user: {
+          name: name,
+          email: email,
+          id: id,
+        },
+        caso: casoPath,
+      })
+    } else {
+      navigation.navigate('Documents', {
+        user: {
+          name: name,
+          email: email,
+          id: id,
+        },
+        caso: casoPath,
+      })
+    }
+  }
+
+
+
+
 
   return (
     <View style={styles.View}>
@@ -44,39 +103,30 @@ export default function CreateCaso({ navigation }: Props) {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {casos.map((item, index) => (
+        {casos.map((caso, index) => (
           <TouchableOpacity 
             style={styles.CasosContainer} 
             key={index} 
-            onPress={() =>
-              navigation.navigate('Documents', {
-                user: {
-                  name: name,
-                  email: email,
-                  id: id,
-                },
-                caso: item.name,
-              })
-            }
+            onPress={() => abrirTela(caso.casoPath, caso.casoStatus)}
           >
             <View>
               <View style={styles.CasosNameView}>
                 <Text style={styles.casosIndex}>{index+1}</Text>
-                <Text style={styles.casosTitle}>{item.name.split('-').slice(1).join('-').split('_')[0]}</Text>
+                <Text style={styles.casosTitle}>{caso.casoName.slice(3)}</Text>
               </View>
               <Text
                 style={[
                   styles.casosStatus,
-                  // item.Status === 'Aprovado'
-                  //   ? { backgroundColor: '#55C06D' }
-                  //   : item.Status === 'Recusado'
-                  //   ? { backgroundColor: '#EF5350' }
-                  //   : item.Status === 'Em andamento'
-                  //   ? { backgroundColor: '#F8C33E' }
-                  //   : {},
+                  caso.casoStatus === 'Aprovado'
+                    ? { backgroundColor: '#55C06D' }
+                    : caso.casoStatus === 'Recusado'
+                    ? { backgroundColor: '#EF5350' }
+                    : caso.casoStatus === 'Em andamento'
+                    ? { backgroundColor: '#F8C33E' }
+                    : {},
                 ]}
               >
-                Aprovado
+                {caso.casoStatus}
               </Text>
             </View>
           </TouchableOpacity>
@@ -172,14 +222,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_600SemiBold',
   },
   casosStatus: {
-    width: 110,
+    width: 150,
     fontSize: 12,
     borderRadius: 10,
     height: 21,
     textAlign: 'center',
     fontFamily: 'Poppins_600SemiBold',
-    color: '#fff',
-    backgroundColor: '#55C06D',
+    color: '#000',
+    borderColor: '#000',
+    borderWidth: 1
   },
   NewDocumentButton: {
     width: 357,

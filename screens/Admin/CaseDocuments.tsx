@@ -102,7 +102,7 @@ export default function CaseDocuments({ navigation }: Props) {
       ) : (
         <ScrollView style={styles.InputsContainer}>
           {documentos.map((doc, index) => (
-            <View style={styles.inputView}>
+            <View style={styles.inputView} key={index}>
               <Text style={styles.label}>{doc.name.replace(/_/g, ' ').slice(0, -4)}</Text>
               <TouchableOpacity 
                 style={styles.buttonDocs} 

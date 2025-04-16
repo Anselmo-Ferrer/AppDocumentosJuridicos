@@ -42,7 +42,8 @@ export default function CreateCasoScreen({ navigation }: Props) {
       advogadoName: '',
       advogadoId: '',
       casoName: `${numCasos}-${casoName}`,
-      casoStatus: 'Em analise',
+      casoPath: `${numCasos}-${casoName}_${customId}`,
+      casoStatus: 'Esperando analise',
       createdAt: new Date()
     });
 

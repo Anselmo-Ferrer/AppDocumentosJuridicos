@@ -4,8 +4,8 @@ export type RootStackParamList = {
   CreateAccount: undefined;
   
   Casos: { user: { name: string, email: string; id: string } };
-  Progress: { user: { name: string, email: string; id: string } };
-  RecusedCaso: { user: { name: string, email: string; id: string } };
+  Progress: { user: { name: string, email: string; id: string }; caso: string };
+  RecusedCaso: { user: { name: string, email: string; id: string }; caso: string };
   CreateCaso: { user: { name: string, email: string; id: string } };
   Documents: { user: { name: string, email: string; id: string }; caso: string };
   NewDocument: { user: { name: string, email: string; id: string }; caso: string };

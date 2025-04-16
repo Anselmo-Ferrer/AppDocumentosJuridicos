@@ -82,16 +82,7 @@ export default function CasosList({ navigation }: Props) {
                   <Text style={styles.casosTitle}>{`${caso.client} / ${caso.casoId}`}</Text>
                 </View>
                 <Text
-                  style={[
-                    styles.casosStatus,
-                    // item.Status === 'Aprovado'
-                    //   ? { backgroundColor: '#55C06D' }
-                    //   : item.Status === 'Recusado'
-                    //   ? { backgroundColor: '#EF5350' }
-                    //   : item.Status === 'Em andamento'
-                    //   ? { backgroundColor: '#F8C33E' }
-                    //   : {},
-                  ]}
+                  style={[styles.casosStatus,]}
                 >
                   {caso.casoStatus}
                 </Text>
@@ -184,14 +175,15 @@ export default function CasosList({ navigation }: Props) {
       fontFamily: 'Poppins_600SemiBold',
     },
     casosStatus: {
-      width: 110,
+      width: 150,
       fontSize: 12,
       borderRadius: 10,
       height: 21,
       textAlign: 'center',
       fontFamily: 'Poppins_600SemiBold',
-      color: '#fff',
-      backgroundColor: '#55C06D',
+      color: '#000',
+      borderColor: '#000',
+      borderWidth: 1
     },
     NewDocumentButton: {
       width: 357,
