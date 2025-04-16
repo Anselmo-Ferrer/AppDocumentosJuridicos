@@ -2,6 +2,7 @@ export type RootStackParamList = {
   Start: undefined;
   LoginAccount: undefined;
   CreateAccount: undefined;
+  
   Casos: { user: { name: string, email: string; id: string } };
   Progress: { user: { name: string, email: string; id: string } };
   RecusedCaso: { user: { name: string, email: string; id: string } };

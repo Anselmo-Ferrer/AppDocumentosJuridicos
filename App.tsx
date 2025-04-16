@@ -37,7 +37,7 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return null; // Você pode usar <AppLoading /> se quiser uma splash personalizada
+    return null;
   }
 
   return (

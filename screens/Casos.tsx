@@ -62,7 +62,7 @@ export default function CreateCaso({ navigation }: Props) {
             <View>
               <View style={styles.CasosNameView}>
                 <Text style={styles.casosIndex}>{index+1}</Text>
-                <Text style={styles.casosTitle}>{item.name.slice(2)}</Text>
+                <Text style={styles.casosTitle}>{item.name.split('-').slice(1).join('-').split('_')[0]}</Text>
               </View>
               <Text
                 style={[

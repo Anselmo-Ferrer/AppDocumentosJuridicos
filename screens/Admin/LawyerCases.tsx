@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, TouchableOpacity } from 'react-native';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { dbAccounts } from '../../firebase/firebaseAccount';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import Background from '../Background';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LawyerCases'>;
 type LawyerCasesRouteProp = RouteProp<RootStackParamList, 'LawyerCases'>;
@@ -44,72 +46,173 @@ export default function LawyerCases({ navigation }: Props) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Meus Casos</Text>
+    <View style={styles.View}>
+      <Background />
+      <View style={styles.ViewBackIcon}>
+        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
+          onPress={() => navigation.navigate('Casos', {
+            user: {
+              name: name,
+              email: email,
+              id: id,
+            }
+          })}/>
+      </View>
+      <View style={styles.ViewTop}>
+        <Text style={styles.Title}>Meus casos</Text>
+        <Text style={styles.SubTitle}>verifique seus casos em aberto</Text>
+      </View>
 
-      {carregando ? (
-        <Text>Carregando...</Text>
-      ) : meusCasos.length === 0 ? (
-        <Text>Nenhum caso assumido ainda.</Text>
-      ) : (
-        <ScrollView>
-          {meusCasos.map((caso, index) => (
-            <View key={index} style={styles.card}>
-              <Text>Cliente: {caso.client}</Text>
-              <Text>Caso ID: {caso.casoId}</Text>
-              <Text>Status: {caso.casoStatus}</Text>
-              <Text>Assumido em: {new Date(caso.createdAt.seconds * 1000).toLocaleDateString()}</Text>
-              <Pressable 
-                style={styles.button} 
-                onPress={() => navigation.navigate('CaseInformations', {
-                  user: {
-                    name: name,
-                    email: email,
-                    id: id,
-                  },
-                  caso: caso.casoId
-                })}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {meusCasos.map((caso, index) => (
+          <TouchableOpacity 
+            style={styles.CasosContainer} 
+            key={index} 
+            onPress={() => navigation.navigate('CaseInformations', {
+              user: {
+                name: name,
+                email: email,
+                id: id,
+              },
+              caso: caso.casoId
+            })}>
+            <View>
+              <View style={styles.CasosNameView}>
+                <Text style={styles.casosIndex}>{index+1}</Text>
+                <Text style={styles.casosTitle}>{`${caso.client} / ${caso.casoId}`}</Text>
+              </View>
+              <Text
+                style={[
+                  styles.casosStatus,
+                  // item.Status === 'Aprovado'
+                  //   ? { backgroundColor: '#55C06D' }
+                  //   : item.Status === 'Recusado'
+                  //   ? { backgroundColor: '#EF5350' }
+                  //   : item.Status === 'Em andamento'
+                  //   ? { backgroundColor: '#F8C33E' }
+                  //   : {},
+                ]}
               >
-                <Text style={styles.buttonText}>My cases</Text>
-              </Pressable>
+                {caso.casoStatus}
+              </Text>
             </View>
-          ))}
-        </ScrollView>
-      )}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 50,
-    paddingHorizontal: 20,
-    flex: 1,
+  View: {
     backgroundColor: '#fff',
+    width: '100%',
+    height: '100%',
+    paddingTop: 40,
+    padding: 20,
+    display: 'flex',
+    alignItems: 'center',
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  ViewTop: {
+    width: '80%',
+  },
+  Title: {
     color: '#1F41BB',
-  },
-  card: {
-    backgroundColor: '#E7ECFF',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 12,
-  },
-  button: {
-    height: 40,
-    marginTop: 10,
-    backgroundColor: '#1F41BB',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
     textAlign: 'center',
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 30,
+    marginTop: 100,
+  },
+  SubTitle: {
+    color: '#000',
+    textAlign: 'center',
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 14,
+    fontStyle: 'normal',
+    marginTop: 6,
+    marginBottom: 50,
+  },
+  ViewBackIcon: {
+    padding: 16,
+    marginTop: 30,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  BackIcon: {
+    backgroundColor: '#CBD6FF',
+    borderRadius: 30,
+    padding: 4,
+    textAlign: 'center'
+  },
+  CasosContainer: {
+    width: 344,
+    height: 120,
+    padding: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 12,
+    borderColor: '#96A9DC',
+    borderWidth: 1,
+    marginBottom: 28,
+    backgroundColor: '#C8D6FF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  CasosNameView: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 4
+  },
+  casosTitle: {
+    color: '#000',
+    fontFamily: 'Poppins_500Medium',
+    marginBottom: 5,
+  },
+  casosIndex: {
+    backgroundColor: '#CBD6FF',
+    width: 21,
+    height: 21,
+    borderRadius: 10.5,
+    textAlign: 'center',
+    fontFamily: 'Poppins_600SemiBold',
+  },
+  casosStatus: {
+    width: 110,
+    fontSize: 12,
+    borderRadius: 10,
+    height: 21,
+    textAlign: 'center',
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#fff',
+    backgroundColor: '#55C06D',
+  },
+  NewDocumentButton: {
+    width: 357,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    display: 'flex',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: '#1F41BB',
+    borderRadius: 10,
+    marginTop: 55,
+    marginBottom: 55,
+    shadowColor: '#CBD6FF',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  NewDocumentText: {
+    color: '#FFF',
+    textAlign: 'center',
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 20,
   },
 });

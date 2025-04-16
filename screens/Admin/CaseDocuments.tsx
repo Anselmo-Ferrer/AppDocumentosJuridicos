@@ -4,8 +4,10 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../types/navigation';
 import { supabase } from '../../supabase/supabaseClient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { doc, getDocs, query, where, updateDoc, collection } from 'firebase/firestore';
+import { getDocs, query, where, collection } from 'firebase/firestore';
 import { dbAccounts } from '../../firebase/firebaseAccount';
+import Background from '../Background';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 type CaseDocumentsRouteProp = RouteProp<RootStackParamList, 'CaseDocuments'>;
 type Props = NativeStackScreenProps<RootStackParamList, 'CaseDocuments'>;
@@ -17,16 +19,17 @@ export default function CaseDocuments({ navigation }: Props) {
 
   const [documentos, setDocumentos] = useState<any[]>([]);
   const [carregando, setCarregando] = useState(true);
-
   const [detalhes, setDetalhes] = useState<any | null>(null);
-
-
-
-
 
   useEffect(() => {
     buscarDetalhes();
   }, []);
+
+  useEffect(() => {
+    if (detalhes) {
+      carregarDocs();
+    }
+  }, [detalhes]);
 
   const buscarDetalhes = async () => {
     try {
@@ -44,25 +47,9 @@ export default function CaseDocuments({ navigation }: Props) {
     }
   };
 
-
-
-
-
-
-
-
-
-
-
-
-
-  useEffect(() => {
-    carregarDocs();
-  }, []);
-
   const carregarDocs = async () => {
-    console.log(caso)
     const path = `envios/${detalhes.clientId}/${detalhes.casoName}_${detalhes.casoId}`;
+    console.log('📂 Path Supabase:', path);
 
     const { data, error } = await supabase.storage
       .from('documents')
@@ -90,21 +77,40 @@ export default function CaseDocuments({ navigation }: Props) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Documentos do Caso</Text>
+    <View style={styles.View}>
+      <Background />
+      <View style={styles.ViewBackIcon}>
+        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
+          onPress={() => navigation.navigate('CaseInformations', {
+            user: {
+              name: name,
+              email: email,
+              id: id,
+            },
+            caso: caso
+          })}/>
+      </View>
+      <View style={styles.ViewTop}>
+        <Text style={styles.Title}>Documentos</Text>
+        <Text style={styles.SubTitle}>
+          Visualize os documentos do processo: processo de transito
+        </Text>
+      </View>
 
       {carregando ? (
         <ActivityIndicator size="large" color="#1F41BB" />
       ) : (
-        <ScrollView>
+        <ScrollView style={styles.InputsContainer}>
           {documentos.map((doc, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.card}
-              onPress={() => abrirDocumento(doc.name)}
-            >
-              <Text>{doc.name.replace(/_/g, ' ')}</Text>
-            </TouchableOpacity>
+            <View style={styles.inputView}>
+              <Text style={styles.label}>{doc.name.replace(/_/g, ' ').slice(0, -4)}</Text>
+              <TouchableOpacity 
+                style={styles.buttonDocs} 
+                onPress={() => abrirDocumento(doc.name)}
+              >
+                <Text style={styles.buttonDocsText}>Ver documentos</Text>
+              </TouchableOpacity>
+            </View>
           ))}
         </ScrollView>
       )}
@@ -113,22 +119,71 @@ export default function CaseDocuments({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 50,
-    paddingHorizontal: 20,
-    flex: 1,
-    backgroundColor: '#fff'
+  View: {
+    backgroundColor: '#fff',
+    width: '100%',
+    height: '100%',
+    paddingTop: 40,
+    padding: 20,
+    display: 'flex',
+    alignItems: 'center'
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  ViewBackIcon: {
+    padding: 16,
+    marginTop: 30,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  BackIcon: {
+    backgroundColor: '#CBD6FF',
+    borderRadius: 30,
+    padding: 4,
+    textAlign: 'center'
+  },
+  ViewTop: {
+    width: '80%',
+  },
+  InputsContainer: {
+    width: '80%'
+  },
+  Title: {
     color: '#1F41BB',
+    textAlign: 'center',
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 30,
   },
-  card: {
-    backgroundColor: '#F1F4FF',
+  SubTitle: {
+    color: '#000',
+    textAlign: 'center',
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 14,
+    fontStyle: 'normal',
+    marginTop: 10,
+    marginBottom: 50,
+  },
+  inputView: {
+    width: '100%',
+    gap: 12,
+  },
+  label: { 
+    color: '#262422',
+    alignSelf: 'flex-start', 
+    fontFamily: 'Poppins_600SemiBold',
+    marginTop: 15, 
+    fontSize: 14
+  },
+  buttonDocs: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#1F41BB',
     borderRadius: 10,
-    padding: 15,
-    marginBottom: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+  },
+  buttonDocsText: { 
+    color: '#1F41BB', 
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
