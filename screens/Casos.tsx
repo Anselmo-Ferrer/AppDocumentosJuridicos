@@ -52,6 +52,7 @@ export default function CreateCaso({ navigation }: Props) {
         casos.push({ ...doc.data(), firebaseId: doc.id });
       });
 
+      setNumCasos(casos.length)
       setCasos(casos);
     } catch (error) {
       console.error('Erro ao buscar casos assumidos:', error);
@@ -60,7 +61,16 @@ export default function CreateCaso({ navigation }: Props) {
 
 
   const abrirTela = (casoPath: string, casoStatus: string) => {
-    if (casoStatus === 'Recusado') {
+    if (casoStatus === 'Aprovado') {
+      navigation.navigate('Documents', {
+        user: {
+          name: name,
+          email: email,
+          id: id,
+        },
+        caso: casoPath,
+      })
+    } else if(casoStatus === 'Recusado') {
       navigation.navigate('RecusedCaso', {
         user: {
           name: name,
@@ -69,23 +79,13 @@ export default function CreateCaso({ navigation }: Props) {
         },
         caso: casoPath,
       })
-    } else if(casoStatus === 'Em andamento') {
-      navigation.navigate('Progress', {
-        user: {
-          name: name,
-          email: email,
-          id: id,
-        },
-        caso: casoPath,
-      })
     } else {
-      navigation.navigate('Documents', {
+      navigation.navigate('Casos', {
         user: {
           name: name,
           email: email,
           id: id,
-        },
-        caso: casoPath,
+        }
       })
     }
   }
@@ -112,7 +112,7 @@ export default function CreateCaso({ navigation }: Props) {
             <View>
               <View style={styles.CasosNameView}>
                 <Text style={styles.casosIndex}>{index+1}</Text>
-                <Text style={styles.casosTitle}>{caso.casoName.slice(3)}</Text>
+                <Text style={styles.casosTitle}>{caso.casoName.slice(2)}</Text>
               </View>
               <Text
                 style={[

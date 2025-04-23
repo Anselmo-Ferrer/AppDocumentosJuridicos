@@ -47,8 +47,13 @@ export default function CaseInformations({ navigation }: Props) {
         advogadoName: name,
         casoStatus: 'Aprovado',
       });
-      Alert.alert('✅ Caso aprovado!');
-      navigation.goBack();
+      navigation.navigate('LawyerCases', {
+        user: {
+          name: name,
+          email: email,
+          id: id,
+        }
+      })
     } catch (e) {
       console.error(e);
     }
@@ -61,8 +66,13 @@ export default function CaseInformations({ navigation }: Props) {
       await updateDoc(docRef, {
         casoStatus: 'Recusado',
       });
-      Alert.alert('❌ Caso recusado.');
-      navigation.goBack();
+      navigation.navigate('LawyerCases', {
+        user: {
+          name: name,
+          email: email,
+          id: id,
+        }
+      })
     } catch (e) {
       console.error(e);
     }
@@ -85,10 +95,10 @@ export default function CaseInformations({ navigation }: Props) {
       </View>
 
 
-      <Image source={require('../../assets/images/pdf.png')} style={styles.avatar} />
+      <Image source={require('../../assets/images/men.png')} style={styles.avatar} />
       <Text style={styles.name}>{detalhes.client}</Text>
-      <Text style={styles.subtitle}>processo de trânsito</Text>
-
+      <Text style={styles.subtitle}>{detalhes.casoName.slice(3)}</Text>
+      
       <View style={styles.inputView}>
         <Text style={styles.label}>Email</Text>
         <Text style={styles.input}>xxx@gmail.com</Text>

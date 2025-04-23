@@ -135,7 +135,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   ToastView: {
-    marginBottom: 20
+    position: 'absolute',
+    top: 20
   },
   ViewTop: {
     width: '80%',

@@ -19,7 +19,6 @@ import DocumentsScreen from './screens/Documents';
 import NewDocumentScreen from './screens/NewDocument';
 import SendScreen from './screens/Send';
 import CreateCasoScreen from './screens/CreateCaso'
-import ProgressBarScreen from './screens/ProgressBar';
 import CasoRecusedScreen from './screens/CasoRecused';
 import CasosList from './screens/Admin/CasosList';
 import LawyerCases from './screens/Admin/LawyerCases';
@@ -47,7 +46,6 @@ export default function App() {
         <Stack.Screen name="LoginAccount" component={LoginAccount} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="Casos" component={CasosScreen} />
-        <Stack.Screen name="Progress" component={ProgressBarScreen} />
         <Stack.Screen name="RecusedCaso" component={CasoRecusedScreen} />
         <Stack.Screen name="CreateCaso" component={CreateCasoScreen} />
         <Stack.Screen name="Documents" component={DocumentsScreen} />

@@ -50,7 +50,7 @@ export default function LawyerCases({ navigation }: Props) {
       <Background />
       <View style={styles.ViewBackIcon}>
         <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
-          onPress={() => navigation.navigate('Casos', {
+          onPress={() => navigation.navigate('CasosList', {
             user: {
               name: name,
               email: email,
