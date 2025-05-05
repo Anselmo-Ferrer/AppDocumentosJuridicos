@@ -12,7 +12,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import * as Progress from 'react-native-progress';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import AntDesign from '@expo/vector-icons/AntDesign';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'NewDocument'>;
 type NewDocumentRouteProp = RouteProp<RootStackParamList, 'NewDocument'>;
@@ -150,9 +149,23 @@ export default function NewDocumentScreen({ navigation }: Props) {
   const pickDocumento = async (
     setter: React.Dispatch<React.SetStateAction<DocumentPicker.DocumentPickerAsset | null>>
   ) => {
-    const result = await DocumentPicker.getDocumentAsync();
+    const result = await DocumentPicker.getDocumentAsync({
+      type: 'application/pdf', // Limita para PDF
+      copyToCacheDirectory: true,
+    });
+  
     if (!result.canceled && result.assets.length > 0) {
-      setter(result.assets[0]);
+      const file = result.assets[0];
+  
+      // Verifica tamanho máximo (em bytes). Exemplo: 5 MB = 5 * 1024 * 1024
+      const MAX_SIZE = 3 * 1024 * 1024;
+  
+      if (file.size && file.size > MAX_SIZE) {
+        alert('O arquivo excede o tamanho máximo permitido de 5MB.');
+        return;
+      }
+  
+      setter(file);
     }
   };
 
@@ -205,17 +218,6 @@ export default function NewDocumentScreen({ navigation }: Props) {
   return (
     <View style={styles.View}>
       <Background />
-      <View style={styles.ViewBackIcon}>
-        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
-          onPress={() => navigation.navigate('Documents', {
-            user: {
-              name: name,
-              email: email,
-              id: id,
-            },
-            caso: caso
-          })}/>
-      </View>
       <Text style={styles.Title}>Enviar documentos</Text>
 
       {renderFileInput(fileId, 'Documento Pessoais', () => pickDocumento(setFileId))}
@@ -253,7 +255,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
     fontSize: 30,
-    marginTop: 20,
+    marginTop: 60,
     marginBottom: 53
   },
   viewBottom: {

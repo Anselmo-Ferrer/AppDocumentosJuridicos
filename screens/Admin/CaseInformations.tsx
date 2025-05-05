@@ -101,12 +101,12 @@ export default function CaseInformations({ navigation }: Props) {
       
       <View style={styles.inputView}>
         <Text style={styles.label}>Email</Text>
-        <Text style={styles.input}>xxx@gmail.com</Text>
+        <Text style={styles.input}>joao@gmail.com</Text>
       </View>
 
       <View style={styles.inputView}>
         <Text style={styles.label}>Phone Number</Text>
-        <Text style={styles.input}>+93123135</Text>
+        <Text style={styles.input}>+8599123123</Text>
       </View> 
 
       <View style={styles.inputView}>

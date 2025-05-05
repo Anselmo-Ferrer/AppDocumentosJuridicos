@@ -62,6 +62,9 @@ export default function DocumentsScreen({ navigation }: Props) {
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Documentos</Text>
         <Text style={styles.SubTitle}>{caso.split('-').slice(2).join('-').split('_')[0]}</Text>
+        <View style={styles.containerCasosStatus}>
+          <Text style={styles.casosStatus}>Aprovado</Text>
+        </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -138,7 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'normal',
     marginTop: 6,
-    marginBottom: 50
+    marginBottom: 10
   },
   CasosContainer: {
     width: 344,
@@ -184,6 +187,11 @@ const styles = StyleSheet.create({
     height: 21,
     textAlign: 'center',
     fontFamily: 'Poppins_600SemiBold',
+  },
+  containerCasosStatus: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 50
   },
 
   NewDocumentButton: {
