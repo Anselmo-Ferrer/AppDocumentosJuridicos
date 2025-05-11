@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TouchableOpacity } from 'react-native';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { dbAccounts } from '../../firebase/firebaseAccount';
+import { dbAccounts } from '../../services/firebase/firebaseConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import Background from '../Background';
+import Background from '../ui/Background';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LawyerCases'>;

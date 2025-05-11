@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, ActivityIndicator, Alert } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../types/navigation';
-import { supabase } from '../../supabase/supabaseClient';
+import { supabase } from '../../services/supabase/supabaseConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { getDocs, query, where, collection } from 'firebase/firestore';
-import { dbAccounts } from '../../firebase/firebaseAccount';
-import Background from '../Background';
+import { dbAccounts } from '../../services/firebase/firebaseConfig';
+import Background from '../ui/Background';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 type CaseDocumentsRouteProp = RouteProp<RootStackParamList, 'CaseDocuments'>;

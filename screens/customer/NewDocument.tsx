@@ -6,10 +6,10 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import { decode } from 'base64-arraybuffer';
 import mime from 'mime';
-import Background from './Background';
-import { supabase } from '../supabase/supabaseClient';
+import Background from '../ui/Background';
+import { supabase } from '../../services/supabase/supabaseConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { RootStackParamList } from '../../types/navigation';
 import * as Progress from 'react-native-progress';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
@@ -189,8 +189,8 @@ export default function NewDocumentScreen({ navigation }: Props) {
           style={styles.folderimage}
           source={
             file
-              ? require('../assets/images/pdf.png')
-              : require('../assets/images/open-folder.png')
+              ? require('../../assets/images/pdf.png')
+              : require('../../assets/images/open-folder.png')
           }
         />
         <View style={{ flex: 1 }}>

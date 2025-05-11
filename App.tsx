@@ -11,19 +11,19 @@ import {
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
 
-import StartScreen from './screens/Start';
-import LoginAccount from './screens/LoginAccount';
-import CreateAccount from './screens/CreateAccount';
-import CasosScreen from './screens/Casos';
-import DocumentsScreen from './screens/Documents';
-import NewDocumentScreen from './screens/NewDocument';
-import SendScreen from './screens/Send';
-import CreateCasoScreen from './screens/CreateCaso'
-import CasoRecusedScreen from './screens/CasoRecused';
-import CasosList from './screens/Admin/CasosList';
-import LawyerCases from './screens/Admin/LawyerCases';
-import CaseInformations from './screens/Admin/CaseInformations';
-import CaseDocuments from './screens/Admin/CaseDocuments';
+import StartScreen from './screens/auth/Start';
+import LoginAccount from './screens/auth/LoginAccount';
+import CreateAccount from './screens/auth/CreateAccount';
+import CasosScreen from './screens/customer/Casos';
+import DocumentsScreen from './screens/customer/Documents';
+import NewDocumentScreen from './screens/customer/NewDocument';
+import SendScreen from './screens/customer/Send';
+import CreateCasoScreen from './screens/customer/CreateCaso'
+import CasoRecusedScreen from './screens/customer/CasoRecused';
+import CasosList from './screens/lawyer/CasosList';
+import LawyerCases from './screens/lawyer/LawyerCases';
+import CaseInformations from './screens/lawyer/CaseInformations';
+import CaseDocuments from './screens/lawyer/CaseDocuments';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

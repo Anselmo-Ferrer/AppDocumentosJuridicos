@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Pressable, TextInput } from 'react-native';
-import Background from './Background';
+import Background from '../ui/Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { RootStackParamList } from '../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { supabase } from '../supabase/supabaseClient';
+import { supabase } from '../../services/supabase/supabaseConfig';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { listarPastas } from '../supabase/storageUtils';
-import { dbAccounts } from '../firebase/firebaseAccount';
+import { listarPastas } from '../../services/supabase/supabaseUtils';
+import { dbAccounts } from '../../services/firebase/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 import uuid from 'react-native-uuid';
 
@@ -29,7 +29,7 @@ export default function CreateCasoScreen({ navigation }: Props) {
 
   const carregarCasos = async () => {
     const resultado = await listarPastas(`envios/${id}/`);
-    setNumCasos(resultado.length-1)
+    setNumCasos(resultado.length)
   };
 
   const criarCaso = async () => {
@@ -44,6 +44,7 @@ export default function CreateCasoScreen({ navigation }: Props) {
       casoName: `${numCasos}-${casoName}`,
       casoPath: `${numCasos}-${casoName}_${customId}`,
       casoStatus: 'Esperando analise',
+      casoRecused: '',
       createdAt: new Date()
     });
 

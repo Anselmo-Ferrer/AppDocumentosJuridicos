@@ -1,4 +1,4 @@
-import { supabase } from "./supabaseClient";
+import { supabase } from "./supabaseConfig";
 
 export const exportarSupabase = async (path: string) => {
   const { data, error } = await supabase.storage

@@ -1,5 +1,5 @@
 import { doc, getDocs, query, where, collection } from 'firebase/firestore';
-import { dbAccounts } from '../firebase/firebaseAccount';
+import { dbAccounts } from './firebaseConfig';
 import { Alert } from 'react-native';
 
 

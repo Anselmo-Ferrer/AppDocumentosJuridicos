@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Pressable, TextInput, ScrollView } from 'react-native';
-import Background from './Background';
-import { dbAccounts } from '../firebase/firebaseAccount';
+import Background from '../ui/Background';
+import { dbAccounts } from '../../services/firebase/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { RootStackParamList } from '../../types/navigation';
 import uuid from 'react-native-uuid';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import DropDownPicker from 'react-native-dropdown-picker';

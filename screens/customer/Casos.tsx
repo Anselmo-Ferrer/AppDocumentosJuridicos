@@ -7,13 +7,12 @@ import {
   ScrollView,
   TouchableOpacity
 } from 'react-native';
-import Background from './Background';
+import Background from '../ui/Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { RootStackParamList } from '../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { listarPastas } from '../supabase/storageUtils';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { dbAccounts } from '../firebase/firebaseAccount';
+import { dbAccounts } from '../../services/firebase/firebaseConfig';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Casos'>;
 type CasosRouteProp = RouteProp<RootStackParamList, 'Casos'>;

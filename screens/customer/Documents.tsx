@@ -8,11 +8,11 @@ import {
   Pressable,
 } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import Background from './Background';
+import Background from '../ui/Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { RootStackParamList } from '../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { deletarArquivo, listarArquivos } from '../supabase/storageUtils';
+import { deletarArquivo, listarArquivos } from '../../services/supabase/supabaseUtils'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Documents'>;
 type DocumentsRouteProp = RouteProp<RootStackParamList, 'Documents'>;
@@ -73,7 +73,7 @@ export default function DocumentsScreen({ navigation }: Props) {
           <View style={styles.CasosContainerLeft}>
             <Image
               style={styles.pdfImg}
-              source={require('../assets/images/pdf.png')}
+              source={require('../../assets/images/pdf.png')}
             />
             <View>
               <Text style={styles.casosTitle}>{item.name.replace(/_/g, ' ').slice(0, -4)}</Text>

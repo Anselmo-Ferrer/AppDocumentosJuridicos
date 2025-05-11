@@ -4,10 +4,13 @@ import {
   Text,
 } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import Background from './Background';
+import Background from '../ui/Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { RootStackParamList } from '../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { dbAccounts } from '../../services/firebase/firebaseConfig';
+import { useEffect, useState } from 'react';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'RecusedCaso'>;
 type CasoRecusedRouteProp = RouteProp<RootStackParamList, 'RecusedCaso'>;
@@ -15,8 +18,36 @@ type CasoRecusedRouteProp = RouteProp<RootStackParamList, 'RecusedCaso'>;
 export default function CasoRecusedScreen({ navigation }: Props) {
 
   const route = useRoute<CasoRecusedRouteProp>();
-  const { user } = route.params;
+  const { user, caso } = route.params;
   const { name, email, id } = user;
+
+  const [casos, setCasos] = useState<any[]>([]);
+
+  useEffect(() => {
+    console.log(caso)
+    buscarMeusCasos()
+  }, [])
+
+
+  const buscarMeusCasos = async () => {
+      try {
+        const q = query(
+          collection(dbAccounts, 'casosProgress'),
+          where('casoPath', '==', caso)
+        );
+  
+        const snapshot = await getDocs(q);
+        const casos: any[] = [];
+  
+        snapshot.forEach((doc) => {
+          casos.push({ ...doc.data(), firebaseId: doc.id });
+        });
+  
+        setCasos(casos);
+      } catch (error) {
+        console.error('Erro ao buscar casos assumidos:', error);
+      }
+    };
 
   return (
     <View style={styles.View}>
@@ -39,7 +70,7 @@ export default function CasoRecusedScreen({ navigation }: Props) {
 
       <View style={styles.ViewContainer}>
         <Text style={styles.MotivoTitle}>Motivo</Text>
-        <Text style={styles.MotivoText}>Seu caso foi recusado pela falta de um renda necessária para da andamento no processo, contato seu advogado para renegociar.</Text>
+        <Text style={styles.MotivoText}>{casos.map(item => item.casoRecused)}</Text>
       </View>
     </View>
   )

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Image, StyleSheet, View, Text, Pressable } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation'
-import Background from './Background';
+import { RootStackParamList } from '../../types/navigation';
+import Background from '../ui/Background';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Start'>;
 
@@ -13,7 +13,7 @@ export default function StartScreen({ navigation }: Props) {
       <View>
         <Image
           style={styles.WelcomeImage}
-          source={require('../assets/images/welcomeImage.png')}
+          source={require('../../assets/images/welcomeImage.png')}
         />
       </View>
       <Text style={styles.Title}>Envie documentos jurídicos</Text>

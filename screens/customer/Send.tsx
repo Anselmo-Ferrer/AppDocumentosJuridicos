@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
-import Background from './Background';
+import Background from '../ui/Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { RootStackParamList } from '../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Send'>;

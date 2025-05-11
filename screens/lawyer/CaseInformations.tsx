@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, TextInput } from 'react-native';
 import { doc, getDocs, query, where, updateDoc, collection } from 'firebase/firestore';
-import { dbAccounts } from '../../firebase/firebaseAccount';
+import { dbAccounts } from '../../services/firebase/firebaseConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import Background from '../Background';
+import Background from '../ui/Background';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { Modal } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CaseInformations'>;
 type CaseInformationsRouteProp = RouteProp<RootStackParamList, 'CaseInformations'>;
@@ -17,6 +18,9 @@ export default function CaseInformations({ navigation }: Props) {
   const { name, email, id } = user;
 
   const [detalhes, setDetalhes] = useState<any | null>(null);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [motivo, setMotivo] = useState('');
 
   useEffect(() => {
     buscarDetalhes();
@@ -65,6 +69,7 @@ export default function CaseInformations({ navigation }: Props) {
       const docRef = doc(dbAccounts, 'casosProgress', detalhes.firebaseId);
       await updateDoc(docRef, {
         casoStatus: 'Recusado',
+        casoRecused: motivo
       });
       navigation.navigate('LawyerCases', {
         user: {
@@ -83,6 +88,49 @@ export default function CaseInformations({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <Background />
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Motivo da recusa:</Text>
+
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Descreva o motivo..."
+              placeholderTextColor="#999"
+              multiline
+              numberOfLines={4}
+              value={motivo}
+              onChangeText={setMotivo}
+            />
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalButtonCancel} onPress={() => setModalVisible(false)}>
+                <Text style={styles.buttonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButtonConfirm}
+                onPress={async () => {
+                  if (motivo.trim().length === 0) {
+                    Alert.alert("Por favor, insira um motivo para recusar.");
+                    return;
+                  }
+                  setModalVisible(false);
+                  await recusarCaso();
+                }}
+              >
+                <Text style={styles.buttonText}>Confirmar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <View style={styles.ViewBackIcon}>
         <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
           onPress={() => navigation.navigate('LawyerCases', {
@@ -97,7 +145,7 @@ export default function CaseInformations({ navigation }: Props) {
 
       <Image source={require('../../assets/images/men.png')} style={styles.avatar} />
       <Text style={styles.name}>{detalhes.client}</Text>
-      <Text style={styles.subtitle}>{detalhes.casoName.slice(3)}</Text>
+      <Text style={styles.subtitle}>{detalhes.casoName.slice(2)}</Text>
       
       <View style={styles.inputView}>
         <Text style={styles.label}>Email</Text>
@@ -128,7 +176,7 @@ export default function CaseInformations({ navigation }: Props) {
       </View>
 
       <View style={styles.buttons}>
-        <TouchableOpacity style={styles.buttonRecusar} onPress={recusarCaso}>
+        <TouchableOpacity style={styles.buttonRecusar} onPress={() => setModalVisible(true)}>
           <Text style={styles.buttonText}>Recusar</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.buttonAprovar} onPress={aprovarCaso}>
@@ -246,4 +294,57 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   buttonText: { color: '#fff', fontWeight: 'bold' },
+
+  modalBackground: {
+  flex: 1,
+  backgroundColor: 'rgba(0,0,0,0.5)',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+modalContainer: {
+  width: '80%',
+  backgroundColor: 'white',
+  padding: 20,
+  borderRadius: 10,
+  alignItems: 'center',
+  elevation: 5,
+},
+modalTitle: {
+  fontSize: 16,
+  fontWeight: 'bold',
+  marginBottom: 20,
+  textAlign: 'center',
+},
+modalButtons: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  width: '100%',
+},
+modalButtonCancel: {
+  backgroundColor: '#aaa',
+  padding: 10,
+  borderRadius: 8,
+  width: '45%',
+  alignItems: 'center',
+},
+modalButtonConfirm: {
+  backgroundColor: '#EF5350',
+  padding: 10,
+  borderRadius: 8,
+  width: '45%',
+  alignItems: 'center',
+},
+modalInput: {
+  width: '100%',
+  minHeight: 100,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 8,
+  padding: 10,
+  textAlignVertical: 'top',
+  color: '#000',
+  marginBottom: 20,
+},
+
+
 });

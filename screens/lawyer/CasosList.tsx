@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Pressable, TouchableOpacity, ScrollView } from 'react-native';
 import { collection, getDocs, updateDoc, doc, query, where } from 'firebase/firestore';
-import { dbAccounts } from '../../firebase/firebaseAccount';
+import { dbAccounts } from '../../services/firebase/firebaseConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import Background from '../Background';
+import Background from '../ui/Background';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CasosList'>;
 type CasosListRouteProp = RouteProp<RootStackParamList, 'CasosList'>;

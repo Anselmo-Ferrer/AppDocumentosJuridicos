@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, View, Text, Pressable, TextInput } from 'react-native';
-import Background from './Background';
-import { dbAccounts } from '../firebase/firebaseAccount';
+import Background from '../ui/Background';
+import { dbAccounts } from '../../services/firebase/firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { RootStackParamList } from '../../types/navigation';
 import Toast from 'react-native-toast-message';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
