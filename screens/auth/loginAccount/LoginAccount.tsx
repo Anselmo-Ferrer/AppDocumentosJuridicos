@@ -7,8 +7,8 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types/navigation';
 import Toast from 'react-native-toast-message';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import BackButton from '../../ui/backButton/BackButton';
+import { validarLogin } from '../../../services/firebase/firebaseUtils';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LoginAccount'>;
 
@@ -16,50 +16,39 @@ export default function LoginAccount({ navigation }: Props) {
   const [email, setEmail] = useState<string>('');
   const [senha, setSenha] = useState<string>('');
 
-  const validarLogin = async () => {
-    try {
-      const usersRef = collection(dbAccounts, 'users');
-      const q = query(usersRef, where('email', '==', email), where('senha', '==', senha));
-      const querySnapshot = await getDocs(q);
+  const HandleLogin = async () => {
+     try {
+      const usario = await validarLogin(email, senha);
 
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0];
-        const userData = userDoc.data();
-  
-        const nameUsuario = userData.name;
-        const emailUsuario = userData.email;
-        const senhaUsuario = userData.senha;
-        const idUsuario = userData.id;
-        const roleUsusuario = userData.role;
-  
-        console.log('Login bem-sucedido!');
-        console.log('Usuário:', { emailUsuario, senhaUsuario, idUsuario, roleUsusuario });
-
-        if (roleUsusuario === 'Advogado') {
-          navigation.navigate('CasosList', {
-            user: {
-              name: nameUsuario,
-              email: emailUsuario,
-              id: idUsuario,
-            }
-          });
-        } else {
-          navigation.navigate('Casos', {
-            user: {
-              name: nameUsuario,
-              email: emailUsuario,
-              id: idUsuario,
-            }
-          });
-        }
-  
-        
-      } else {
+      if (!usario) {
         console.warn('Email ou senha inválidos!');
-        showToast()
+        return showToast();
       }
-    } catch (error) {
+
+      console.log('Login bem-sucedido!');
+      console.log('Usuário:', usario);
+
+      if (usario.role === 'Advogado') {
+        navigation.navigate('CasosList', {
+          user: {
+            name: usario.name,
+            email: usario.email,
+            id: usario.id,
+          }
+        });
+      } else {
+        navigation.navigate('Casos', {
+          user: {
+            name: usario.name,
+            email: usario.email,
+            id: usario.id,
+          }
+        });
+      }
+        
+      } catch (error) {
       console.error('Erro ao fazer login:', error);
+      showToast()
     }
   };
 
@@ -107,7 +96,7 @@ export default function LoginAccount({ navigation }: Props) {
       >
         <Text style={styles.ForgotPasswordText}>esqueceu sua senha?</Text>
       </Pressable>
-      <Pressable style={styles.LoginAccountButton} onPress={validarLogin}>
+      <Pressable style={styles.LoginAccountButton} onPress={HandleLogin}>
         <Text style={styles.LoginAccountText}>Entrar</Text>
       </Pressable>
       <Pressable

@@ -1,27 +1,5 @@
-import { doc, getDocs, query, where, collection } from 'firebase/firestore';
+import { getDocs, query, where, collection } from 'firebase/firestore';
 import { dbAccounts } from './firebaseConfig';
-import { Alert } from 'react-native';
-
-
-export const fetchCasosProgress = async (id: number | string) => {
-  try {
-    const q = query(
-      collection(dbAccounts, 'casosProgress'),
-      where('casoId', '==', id)
-    );
-    const snapshot = await getDocs(q);
-
-    if (!snapshot.empty) {
-      const docSnap = snapshot.docs[0];
-      return { ...docSnap.data(), firebaseId: docSnap.id };
-    } else {
-      Alert.alert('Erro', 'Caso não encontrado');
-    }
-  } catch (e) {
-    console.error(e);
-  }
-};
-
 
 export const buscarFirebase = async (field: string, value: string) => {
   try {
@@ -43,3 +21,24 @@ export const buscarFirebase = async (field: string, value: string) => {
     return [];
   }
 };
+
+export const validarLogin = async (email: string, senha: string) => {
+  const q = query(
+    collection(dbAccounts, 'users'),
+    where('email', '==', email),
+    where('senha', '==', senha)
+  );
+
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) return null;
+
+  const { name, email: emailUsuario, id, role } = snapshot.docs[0].data();
+
+  return {
+    name,
+    email: emailUsuario,
+    id,
+    role,
+  };
+}

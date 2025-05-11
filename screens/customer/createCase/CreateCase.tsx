@@ -5,7 +5,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { supabase } from '../../../services/supabase/supabaseConfig';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { listarPastas } from '../../../services/supabase/supabaseUtils';
 import { dbAccounts } from '../../../services/firebase/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
