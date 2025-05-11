@@ -21,3 +21,25 @@ export const fetchCasosProgress = async (id: number | string) => {
     console.error(e);
   }
 };
+
+
+export const buscarFirebase = async (field: string, value: string) => {
+  try {
+    const q = query(
+      collection(dbAccounts, 'casosProgress'),
+      where(field, '==', value)
+    );
+
+    const snapshot = await getDocs(q);
+    const resultado: any[] = [];
+
+    snapshot.forEach((doc) => {
+      resultado.push({ ...doc.data(), firebaseId: doc.id });
+    });
+
+    return resultado;
+  } catch (error) {
+    console.error('Erro ao buscar casos assumidos:', error);
+    return [];
+  }
+};

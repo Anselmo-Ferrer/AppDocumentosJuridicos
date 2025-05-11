@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Pressable, TextInput } from 'react-native';
-import Background from '../ui/Background';
+import { View, Text, Pressable, TextInput } from 'react-native';
+import Background from '../../ui/background/Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../types/navigation';
+import { RootStackParamList } from '../../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { supabase } from '../../services/supabase/supabaseConfig';
+import { supabase } from '../../../services/supabase/supabaseConfig';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { listarPastas } from '../../services/supabase/supabaseUtils';
-import { dbAccounts } from '../../services/firebase/firebaseConfig';
+import { listarPastas } from '../../../services/supabase/supabaseUtils';
+import { dbAccounts } from '../../../services/firebase/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 import uuid from 'react-native-uuid';
+import { styles } from './styles';
+import BackButton from '../../ui/backButton/BackButton';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateCaso'>;
 type CreateCasoRouteProp = RouteProp<RootStackParamList, 'CreateCaso'>;
@@ -80,19 +82,7 @@ export default function CreateCasoScreen({ navigation }: Props) {
   return (
     <View style={styles.View}>
       <Background />
-      {/* <View style={styles.ToastView}>
-        <Toast/>
-      </View> */}
-      <View style={styles.ViewBackIcon}>
-        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
-          onPress={() => navigation.navigate('Casos', {
-            user: {
-              name: name,
-              email: email,
-              id: id,
-            }
-          })}/>
-      </View>
+      <BackButton />
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Criar caso</Text>
         <Text style={styles.SubTitle}>
@@ -117,87 +107,3 @@ export default function CreateCasoScreen({ navigation }: Props) {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  View: {
-    backgroundColor: '#fff',
-    width: '100%',
-    height: '100%',
-    paddingTop: 40,
-    padding: 20,
-    display: 'flex',
-    alignItems: 'center'
-  },
-  ToastView: {
-    marginBottom: 20
-  },
-  ViewBackIcon: {
-    padding: 16,
-    marginTop: 30,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  BackIcon: {
-    backgroundColor: '#CBD6FF',
-    borderRadius: 30,
-    padding: 4,
-    textAlign: 'center'
-  },
-  ViewTop: {
-    width: '80%',
-  },
-  Title: {
-    color: '#1F41BB',
-    textAlign: 'center',
-    fontFamily: 'Poppins_700Bold',
-    fontSize: 30,
-  },
-  SubTitle: {
-    color: '#000',
-    textAlign: 'center',
-    fontFamily: 'Poppins_500Medium',
-    fontSize: 14,
-    fontStyle: 'normal',
-    marginTop: 10,
-  },
-  ViewInputs: {
-    width: '80%',
-    alignItems: 'center',
-    gap: 26,
-    marginTop: 53
-  },
-  Input: {
-    display: 'flex',
-    width: 357,
-    paddingVertical: 20,
-    paddingLeft: 20,
-    paddingRight: 35,
-    borderRadius: 10,
-    backgroundColor: '#F1F4FF',
-    fontFamily: 'Poppins_500Medium',
-    fontSize: 16,
-  },
-  LoginAccountButton: {
-    width: 357,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    display: 'flex',
-    justifyContent: 'center',
-    gap: 10,
-    backgroundColor: '#1F41BB',
-    borderRadius: 10,
-    marginTop: 30,
-    shadowColor: '#CBD6FF',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  LoginAccountText: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Poppins_600SemiBold',
-    fontSize: 20,
-  }
-});

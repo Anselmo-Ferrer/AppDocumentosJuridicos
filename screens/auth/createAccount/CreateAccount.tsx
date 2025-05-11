@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Pressable, TextInput, ScrollView } from 'react-native';
-import Background from '../ui/Background';
-import { dbAccounts } from '../../services/firebase/firebaseConfig';
+import { styles } from './styles';
+import { View, Text, Pressable, TextInput, ScrollView } from 'react-native';
+import Background from '../../ui/background/Background';
+import { dbAccounts } from '../../../services/firebase/firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../types/navigation';
+import { RootStackParamList } from '../../../types/navigation';
 import uuid from 'react-native-uuid';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import DropDownPicker from 'react-native-dropdown-picker';
+import BackButton from '../../ui/backButton/BackButton';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateAccount'>;
 
@@ -56,10 +58,7 @@ export default function CreateAccount({ navigation }: Props) {
   return (
     <View style={styles.View}>
       <Background />
-      <View style={styles.ViewBackIcon}>
-        <AntDesign name="left" size={30} color="#1F41BB" style={styles.BackIcon}
-          onPress={() => navigation.navigate('Start')}/>
-      </View>
+      <BackButton />
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Criar conta</Text>
         <Text style={styles.SubTitle}>
@@ -131,126 +130,3 @@ export default function CreateAccount({ navigation }: Props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  View: {
-    backgroundColor: '#fff',
-    width: '100%',
-    height: '100%',
-    paddingTop: 40,
-    padding: 20,
-    display: 'flex',
-    alignItems: 'center'
-  },
-  ViewBackIcon: {
-    padding: 16,
-    marginTop: 30,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-  },
-  BackIcon: {
-    backgroundColor: '#CBD6FF',
-    borderRadius: 30,
-    padding: 4,
-    textAlign: 'center'
-  },
-  ViewTop: {
-    width: '80%',
-  },
-  Title: {
-    color: '#1F41BB',
-    textAlign: 'center',
-    fontFamily: 'Poppins_700Bold',
-    fontSize: 30,
-  },
-  SubTitle: {
-    color: '#000',
-    textAlign: 'center',
-    fontFamily: 'Poppins_500Medium',
-    fontSize: 14,
-    fontStyle: 'normal',
-    marginTop: 10,
-  },
-  ViewInputs: {
-    width: '100%',
-    height: 430,
-    alignItems: 'center',
-    gap: 26,
-    marginTop: 53
-  },
-  Input: {
-    display: 'flex',
-    width: 357,
-    paddingVertical: 20,
-    paddingLeft: 20,
-    paddingRight: 35,
-    borderRadius: 10,
-    //borderWidth: 2,
-    //borderColor: '#1F41BB',
-    backgroundColor: '#F1F4FF',
-    fontFamily: 'Poppins_500Medium',
-    fontSize: 16,
-    marginBottom: 26
-  },
-  CreateAccountButton: {
-    width: 357,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    display: 'flex',
-    justifyContent: 'center',
-    gap: 10,
-    backgroundColor: '#1F41BB',
-    borderRadius: 10,
-    marginTop: 53,
-
-    shadowColor: '#CBD6FF',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  CreateAccountText: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Poppins_600SemiBold',
-    fontSize: 20,
-  },
-  HaveAccountButton: {
-    display: 'flex',
-    width: 357,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    marginTop: 20
-  },
-  HaveAccountText: {
-    color: '#494949',
-    textAlign: 'center',
-    fontSize: 14,
-    fontStyle: 'normal',
-    fontFamily: 'Poppins_600SemiBold',
-  },
-
-
-
-  pickerStyle: {
-  width: '100%',
-  backgroundColor: '#F1F4FF',
-  borderColor: '#fff',
-  borderRadius: 10,
-  paddingVertical: 20,
-  paddingLeft: 20,
-  paddingRight: 35,
-  marginBottom: 26,
-},
-pickerContainer: {
-  width: 357,
-},
-pickerDropdown: {
-  width: 357,
-  backgroundColor: '#fff',
-  borderColor: '#ccc',
-}
-})

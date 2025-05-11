@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   Text,
   Pressable,
   ScrollView,
   TouchableOpacity
 } from 'react-native';
-import Background from '../ui/Background';
+import Background from '../../ui/background/Background';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../types/navigation';
+import { RootStackParamList } from '../../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { dbAccounts } from '../../services/firebase/firebaseConfig';
+import { buscarFirebase } from '../../../services/firebase/firebaseUtils';
+import { styles } from './styles';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Casos'>;
 type CasosRouteProp = RouteProp<RootStackParamList, 'Casos'>;
@@ -27,37 +26,13 @@ export default function CreateCaso({ navigation }: Props) {
   const [numCasos, setNumCasos] = useState<number>();
 
   useEffect(() => {
-    buscarMeusCasos();
+    fetchCasos();
   }, []);
 
-  // const carregarCasos = async () => {
-  //   const resultado = await listarPastas(`envios/${id}/`);
-  //   setNumCasos(resultado.length)
-  //   setCasos(resultado);
-  // };
-
-
-  const buscarMeusCasos = async () => {
-    try {
-      const q = query(
-        collection(dbAccounts, 'casosProgress'),
-        where('clientId', '==', id)
-      );
-
-      const snapshot = await getDocs(q);
-      const casos: any[] = [];
-
-      snapshot.forEach((doc) => {
-        casos.push({ ...doc.data(), firebaseId: doc.id });
-      });
-
-      setNumCasos(casos.length)
-      setCasos(casos);
-    } catch (error) {
-      console.error('Erro ao buscar casos assumidos:', error);
-    }
+  const fetchCasos = async () => {
+    const data = await buscarFirebase('clientId', id);
+    setCasos(data);
   };
-
 
   const abrirTela = (casoPath: string, casoStatus: string) => {
     if (casoStatus === 'Aprovado') {
@@ -153,105 +128,3 @@ export default function CreateCaso({ navigation }: Props) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  View: {
-    backgroundColor: '#fff',
-    width: '100%',
-    height: '100%',
-    paddingTop: 40,
-    padding: 20,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  ViewTop: {
-    width: '80%',
-  },
-  Title: {
-    color: '#1F41BB',
-    textAlign: 'center',
-    fontFamily: 'Poppins_700Bold',
-    fontSize: 30,
-    marginTop: 100,
-  },
-  SubTitle: {
-    color: '#000',
-    textAlign: 'center',
-    fontFamily: 'Poppins_500Medium',
-    fontSize: 14,
-    fontStyle: 'normal',
-    marginTop: 6,
-    marginBottom: 50,
-  },
-  CasosContainer: {
-    width: 344,
-    height: 120,
-    padding: 16,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: 12,
-    borderColor: '#E7E7E7',
-    borderWidth: 1,
-    marginBottom: 28,
-    backgroundColor: '#FFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  CasosNameView: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 4
-  },
-  casosTitle: {
-    color: '#000',
-    fontFamily: 'Poppins_500Medium',
-    marginBottom: 5,
-  },
-  casosIndex: {
-    backgroundColor: '#CBD6FF',
-    width: 21,
-    height: 21,
-    borderRadius: 10.5,
-    textAlign: 'center',
-    fontFamily: 'Poppins_600SemiBold',
-  },
-  casosStatus: {
-    width: 150,
-    fontSize: 12,
-    borderRadius: 10,
-    height: 21,
-    textAlign: 'center',
-    fontFamily: 'Poppins_600SemiBold',
-    color: '#000',
-    borderColor: '#000',
-    borderWidth: 1
-  },
-  NewDocumentButton: {
-    width: 357,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    display: 'flex',
-    justifyContent: 'center',
-    gap: 10,
-    backgroundColor: '#1F41BB',
-    borderRadius: 10,
-    marginTop: 55,
-    marginBottom: 55,
-    shadowColor: '#CBD6FF',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  NewDocumentText: {
-    color: '#FFF',
-    textAlign: 'center',
-    fontFamily: 'Poppins_600SemiBold',
-    fontSize: 20,
-  },
-});
