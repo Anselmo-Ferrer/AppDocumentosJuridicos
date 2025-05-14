@@ -13,6 +13,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types/navigation';
 import * as Progress from 'react-native-progress';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'NewDocument'>;
 type NewDocumentRouteProp = RouteProp<RootStackParamList, 'NewDocument'>;
@@ -151,24 +152,30 @@ export default function NewDocumentScreen({ navigation }: Props) {
     setter: React.Dispatch<React.SetStateAction<DocumentPicker.DocumentPickerAsset | null>>
   ) => {
     const result = await DocumentPicker.getDocumentAsync({
-      type: 'application/pdf', // Limita para PDF
+      type: 'application/pdf',
       copyToCacheDirectory: true,
     });
   
     if (!result.canceled && result.assets.length > 0) {
       const file = result.assets[0];
   
-      // Verifica tamanho máximo (em bytes). Exemplo: 5 MB = 5 * 1024 * 1024
       const MAX_SIZE = 3 * 1024 * 1024;
   
       if (file.size && file.size > MAX_SIZE) {
-        alert('O arquivo excede o tamanho máximo permitido de 5MB.');
-        return;
+        return showToast();
       }
   
       setter(file);
     }
   };
+
+  const showToast = () => {
+      Toast.show({
+        type: 'error',
+        text1: 'O arquivo excede o tamanho de 5MB',
+        text2: 'Tente novamente'
+      });
+    }
 
   const convertFileSize = (size: number) => {
     const sizeInMB = size / (1024 * 1024);
@@ -219,6 +226,9 @@ export default function NewDocumentScreen({ navigation }: Props) {
   return (
     <View style={styles.View}>
       <Background />
+      <View style={styles.ToastView}>
+        <Toast/>
+      </View>
       <Text style={styles.Title}>Enviar documentos</Text>
 
       {renderFileInput(fileId, 'Documento Pessoais', () => pickDocumento(setFileId))}

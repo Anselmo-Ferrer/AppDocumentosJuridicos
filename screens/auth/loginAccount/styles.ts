@@ -35,6 +35,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
     fontSize: 30,
+    marginTop: 30
   },
   SubTitle: {
     color: '#000',

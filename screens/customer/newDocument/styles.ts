@@ -10,6 +10,11 @@ export const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center'
   },
+  ToastView: {
+    position: 'absolute',
+    top: 30,
+    zIndex: 100
+  },
   Title: {
     color: '#1F41BB',
     textAlign: 'center',

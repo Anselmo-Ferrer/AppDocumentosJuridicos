@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { styles } from './styles';
 import { View, Text, Pressable, TextInput } from 'react-native';
 import Background from '../../ui/background/Background';
-import { dbAccounts } from '../../../services/firebase/firebaseConfig';
-import { collection, getDocs, query, where } from 'firebase/firestore';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types/navigation';
 import Toast from 'react-native-toast-message';
@@ -96,7 +94,7 @@ export default function LoginAccount({ navigation }: Props) {
         style={styles.ForgotPassword}
         onPress={() => navigation.navigate('Start')}
       >
-        <Text style={styles.ForgotPasswordText}>esqueceu sua senha?</Text>
+        <Text style={styles.ForgotPasswordText}>Esqueceu sua senha?</Text>
       </Pressable>
       <Pressable style={styles.LoginAccountButton} onPress={HandleLogin}>
         <Text style={styles.LoginAccountText}>Entrar</Text>
