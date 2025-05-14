@@ -91,13 +91,22 @@ export default function NewDocumentScreen({ navigation }: Props) {
 
   const sanitizeFileName = (nome: string) => {
     return nome
-      .normalize('NFD') // separa acentos de letras
-      .replace(/[\u0300-\u036f]/g, '') // remove os acentos
-      .replace(/ç/g, 'c') // troca cedilha
-      .replace(/[^a-zA-Z0-9_]/g, '_'); // substitui tudo que não for letra/número por "_"
+      .normalize('NFD') 
+      .replace(/[\u0300-\u036f]/g, '') 
+      .replace(/ç/g, 'c')
+      .replace(/[^a-zA-Z0-9_]/g, '_');
   };
 
   const salvarTodosDocumentos = async () => {
+    if (!fileId || !fileEndereco || !fileRenda || !fileProvas) {
+      Toast.show({
+        type: 'error',
+        text1: 'Campos obrigatórios',
+        text2: 'Por favor, envie todos os documentos antes de continuar',
+      });
+      return;
+  }
+
     try {
       const documentos = [
         { file: fileId, tipo: 'Documento Pessoal' },
@@ -130,7 +139,6 @@ export default function NewDocumentScreen({ navigation }: Props) {
             size: docItem.file.size || 0,
           };
   
-          // Apenas logando no console, sem salvar no Firebase
           console.log(`✅ Documento ${docItem.tipo} enviado com sucesso para: ${url}`);
           console.log('Metadados:', doc);
         }
@@ -162,20 +170,17 @@ export default function NewDocumentScreen({ navigation }: Props) {
       const MAX_SIZE = 3 * 1024 * 1024;
   
       if (file.size && file.size > MAX_SIZE) {
-        return showToast();
+        Toast.show({
+          type: 'error',
+          text1: 'O arquivo excede o tamanho de 5MB',
+          text2: 'Tente novamente'
+        });
+        return;
       }
   
       setter(file);
     }
   };
-
-  const showToast = () => {
-      Toast.show({
-        type: 'error',
-        text1: 'O arquivo excede o tamanho de 5MB',
-        text2: 'Tente novamente'
-      });
-    }
 
   const convertFileSize = (size: number) => {
     const sizeInMB = size / (1024 * 1024);

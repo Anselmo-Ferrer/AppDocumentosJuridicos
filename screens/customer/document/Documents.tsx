@@ -46,6 +46,14 @@ export default function DocumentsScreen({ navigation }: Props) {
     }
   };
 
+  const formatarData = (isoString: string) => {
+  const data = new Date(isoString);
+  const dia = String(data.getDate()).padStart(2, '0');
+  const mes = String(data.getMonth() + 1).padStart(2, '0');
+  const ano = data.getFullYear();
+  return `${dia}/${mes}/${ano}`;
+};
+
 
   return (
     <View style={styles.View}>
@@ -69,27 +77,17 @@ export default function DocumentsScreen({ navigation }: Props) {
             />
             <View>
               <Text style={styles.casosTitle}>{item.name.replace(/_/g, ' ').slice(0, -4)}</Text>
-              <Text>{item.metadata?.lastModified || 'sem data'}</Text>
+              <Text>
+                {item.metadata?.lastModified
+                  ? formatarData(item.metadata.lastModified)
+                  : 'sem data'}
+              </Text>
             </View>
           </View>
           <AntDesign name="delete" size={24} color="gray" onPress={() => handleDelete(item.name)}/>
         </View>
       ))}
       </ScrollView>
-
-      <Pressable
-        style={styles.NewDocumentButton}
-        onPress={() => navigation.navigate('NewDocument', {
-          user: {
-            name: name,
-            email: email,
-            id: id,
-          },
-          caso: caso,
-        })}
-      >
-        <Text style={styles.NewDocumentText}>Enviar</Text>
-      </Pressable>
     </View>
   );
 }

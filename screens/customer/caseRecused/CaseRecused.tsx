@@ -36,7 +36,7 @@ export default function CasoRecusedScreen({ navigation }: Props) {
       <BackButton />
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Caso recusado</Text>
-        <Text style={styles.SubTitle}>fale com seu advodago</Text>
+        <Text style={styles.SubTitle}>fale com seu advogado</Text>
       </View>
 
 
