@@ -27,6 +27,8 @@ export default function LoginAccount({ navigation }: Props) {
 
       console.log('Login bem-sucedido!');
       console.log('Usuário:', usario);
+      setEmail('')
+      setSenha('')
 
       if (usario.role === 'Advogado') {
         navigation.navigate('CasosList', {

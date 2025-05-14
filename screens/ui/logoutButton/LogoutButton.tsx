@@ -1,24 +1,27 @@
 import React from 'react';
-import { styles } from './styles';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
+import { styles } from './styles';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../../types/navigation';
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'Start'>;
 
 export default function LogoutButton() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
 
   return (
     <View style={styles.container}>
-      <View style={styles.containerContent}>
+      <TouchableOpacity style={styles.containerContent} onPress={() => navigation.navigate('Start')}>
         <AntDesign
           name="logout"
           size={25}
           color="#1F41BB"
           style={styles.icon}
-          onPress={navigation.goBack}
         />
         <Text>Sair</Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }

@@ -48,6 +48,11 @@ export default function CreateAccount({ navigation }: Props) {
   
       console.log('Conta criada com ID customizado: ', customId);
       console.log('Firestore ID gerado: ', docRef.id);
+      setRole('')
+      setName('')
+      setEmail('')
+      setCpf('')
+      setRole('')
   
       navigation.navigate('LoginAccount');
     } catch (e) {
