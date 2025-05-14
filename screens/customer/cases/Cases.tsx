@@ -12,6 +12,7 @@ import { RootStackParamList } from '../../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { buscarFirebase } from '../../../services/firebase/firebaseUtils';
 import { styles } from './styles';
+import LogoutButton from '../../ui/logoutButton/LogoutButton';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Casos'>;
 type CasosRouteProp = RouteProp<RootStackParamList, 'Casos'>;
@@ -71,9 +72,10 @@ export default function CreateCaso({ navigation }: Props) {
   return (
     <View style={styles.View}>
       <Background />
+      <LogoutButton />
       <View style={styles.ViewTop}>
-        <Text style={styles.Title}>Processos Ativos</Text>
-        <Text style={styles.SubTitle}>{`${numCasos} processos em andamento`}</Text>
+        <Text style={styles.Title}>Casos Ativos</Text>
+        <Text style={styles.SubTitle}>{`${casos.length} processos em andamento`}</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -116,14 +118,8 @@ export default function CreateCaso({ navigation }: Props) {
             id: id,
           }
         })}
-        // onPress={() => navigation.navigate('RecusedCaso', {
-        //   user: {
-        //     email: email,
-        //     id: id,
-        //   }
-        // })}
       >
-        <Text style={styles.NewDocumentText}>Criar</Text>
+        <Text style={styles.NewDocumentText}>Criar caso</Text>
       </Pressable>
     </View>
   );

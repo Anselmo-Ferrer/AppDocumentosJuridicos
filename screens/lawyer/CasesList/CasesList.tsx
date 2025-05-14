@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { styles } from './styles';
 import { View, Text, Pressable, TouchableOpacity, ScrollView } from 'react-native';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { dbAccounts } from '../../../services/firebase/firebaseConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types/navigation';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import Background from '../../ui/background/Background';
+import LogoutButton from '../../ui/logoutButton/LogoutButton';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CasosList'>;
 type CasosListRouteProp = RouteProp<RootStackParamList, 'CasosList'>;
@@ -66,6 +68,7 @@ export default function CasosList({ navigation }: Props) {
   return (
     <View style={styles.View}>
       <Background />
+      <LogoutButton />
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Casos</Text>
         <Text style={styles.SubTitle}>{`${numCasos} casos em andamento`}</Text>
@@ -77,16 +80,17 @@ export default function CasosList({ navigation }: Props) {
             style={styles.CasosContainer} 
             key={index} 
             onPress={() => assumirCaso(caso.firebaseId)}>
-            <View>
-              <View style={styles.CasosNameView}>
-                <Text style={styles.casosIndex}>{index+1}</Text>
-                <Text style={styles.casosTitle}>{`${caso.client} / ${caso.casoId}`}</Text>
+            <View style={styles.casosViewAll}>
+              <View>
+                <View style={styles.CasosNameView}>
+                  <View style={styles.CasosNameSubView}>
+                    <Text style={styles.casosIndex}>{index+1}</Text>
+                    <Text style={styles.casosTitle}>{caso.casoName.slice(2)}</Text>
+                  </View>
+                  <Text style={styles.casosTitle}>{caso.client}</Text>
+                </View>
               </View>
-              <Text
-                style={[styles.casosStatus,]}
-              >
-                {caso.casoStatus}
-              </Text>
+              <AntDesign name="pluscircle" size={24} color="#1F41BB"/>
             </View>
           </TouchableOpacity>
         ))}

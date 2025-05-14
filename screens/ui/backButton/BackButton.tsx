@@ -1,6 +1,6 @@
 import React from 'react';
 import { styles } from './styles';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 

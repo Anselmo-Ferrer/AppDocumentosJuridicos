@@ -69,25 +69,29 @@ export default function LawyerCases({ navigation }: Props) {
               },
               caso: caso.casoId
             })}>
-            <View>
-              <View style={styles.CasosNameView}>
-                <Text style={styles.casosIndex}>{index+1}</Text>
-                <Text style={styles.casosTitle}>{`${caso.client} / ${caso.casoId}`}</Text>
+            <View style={styles.casosViewAll}>
+              <View>
+                <View style={styles.CasosNameView}>
+                  <View style={styles.CasosNameSubView}>
+                    <Text style={styles.casosIndex}>{index+1}</Text>
+                    <Text style={styles.casosTitle}>{caso.casoName.slice(2)}</Text>
+                  </View>
+                  <Text style={styles.casosTitle}>{caso.client}</Text>
+                  <Text
+                    style={[  
+                      styles.casosStatus,
+                      caso.casoStatus === 'Aprovado'
+                        ? { backgroundColor: '#55C06D' }
+                        : caso.casoStatus === 'Recusado'
+                        ? { backgroundColor: '#EF5350' }
+                        : caso.casoStatus === 'Em andamento'
+                        ? { backgroundColor: '#F8C33E' }
+                        : {},
+                    ]}
+                  >{caso.casoStatus}</Text>
+                </View>
               </View>
-              <Text
-                style={[
-                  styles.casosStatus,
-                  caso.casoStatus === 'Aprovado'
-                    ? { backgroundColor: '#55C06D' }
-                    : caso.casoStatus === 'Recusado'
-                    ? { backgroundColor: '#EF5350' }
-                    : caso.casoStatus === 'Em andamento'
-                    ? { backgroundColor: '#F8C33E' }
-                    : {},
-                ]}
-              >
-                {caso.casoStatus}
-              </Text>
+              <AntDesign name="arrowright" size={24} color="#1F41BB"/>
             </View>
           </TouchableOpacity>
         ))}

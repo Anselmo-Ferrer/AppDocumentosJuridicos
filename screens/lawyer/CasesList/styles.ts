@@ -50,7 +50,6 @@ export const styles = StyleSheet.create({
   },
   CasosNameView: {
     display: 'flex',
-    flexDirection: 'row',
     gap: 4
   },
   casosTitle: {
@@ -100,4 +99,16 @@ export const styles = StyleSheet.create({
     fontFamily: 'Poppins_600SemiBold',
     fontSize: 20,
   },
+  CasosNameSubView: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 4
+  },
+  casosViewAll: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  }
 });

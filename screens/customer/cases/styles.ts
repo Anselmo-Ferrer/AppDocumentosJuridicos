@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Poppins_700Bold',
     fontSize: 30,
-    marginTop: 100,
+    marginTop: 40,
   },
   SubTitle: {
     color: '#000',

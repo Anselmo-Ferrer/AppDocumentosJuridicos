@@ -53,7 +53,7 @@ export default function DocumentsScreen({ navigation }: Props) {
       <BackButton />
       <View style={styles.ViewTop}>
         <Text style={styles.Title}>Documentos</Text>
-        <Text style={styles.SubTitle}>{caso.split('-').slice(2).join('-').split('_')[0]}</Text>
+        <Text style={styles.SubTitle}>Visualize os documentos do seu caso</Text>
         <View style={styles.containerCasosStatus}>
           <Text style={styles.casosStatus}>Aprovado</Text>
         </View>
